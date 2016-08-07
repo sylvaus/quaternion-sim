@@ -82,7 +82,7 @@ def quatY(theta) -> Quaternion:
 
 
 def quatZ(theta) -> Quaternion:
-    return Quaternion([np.cos(theta / 2), 0, 0, np.sinzz(theta / 2)])
+    return Quaternion([np.cos(theta / 2), 0, 0, np.sin(theta / 2)])
 
 
 def quat_from_axis_and_theta(axis: np.ndarray, theta: float) -> Quaternion:
