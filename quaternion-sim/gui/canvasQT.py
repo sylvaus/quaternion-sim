@@ -8,6 +8,8 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 from mpl_toolkits.mplot3d import Axes3D
 
+from matplotlib.animation import FuncAnimation
+
 use_pyside = qt_compat.QT_API == qt_compat.QT_API_PYSIDE
 if use_pyside:
     from PySide import QtGui, QtCore
@@ -23,7 +25,7 @@ class DynamicCanvas(FigureCanvas):
     def __init__(self,
                  update_func,
                  parent=None,
-                 timer_period=100,
+                 timer_period=50,
                  pressed_keys=None):
         """
         :param update_func: callable taking 2 parameters (Axes3D and an Array containing keystrokes data)
@@ -37,7 +39,7 @@ class DynamicCanvas(FigureCanvas):
         self.fig = plt.figure()
         self.axes = self.fig.add_subplot(111, projection='3d')
         # We want the axes cleared every time plot() is called
-        self.axes.hold(False)
+        self.axes.hold(True)
 
         FigureCanvas.__init__(self, self.fig)
         self.setParent(parent)
@@ -46,17 +48,18 @@ class DynamicCanvas(FigureCanvas):
                                    QtGui.QSizePolicy.Expanding,
                                    QtGui.QSizePolicy.Expanding)
 
-        timer = QtCore.QTimer(self)
-        timer.timeout.connect(self.update_figure)
-        timer.start(timer_period)
+        #timer = QtCore.QTimer(self)
+        #timer.timeout.connect(self.update_figure)
+        #timer.start(timer_period)
 
         self.update_func = update_func
         self.pressed_keys = pressed_keys
+        self.fig.canvas.draw()
 
+        self.animation = FuncAnimation(self.fig, self.update_figure, interval=timer_period, blit=True)
 
-    def update_figure(self):
-        self.update_func(self.axes, self.pressed_keys)
-        self.draw()
+    def update_figure(self, i):
+        return self.update_func(self.axes, self.pressed_keys)
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -110,6 +113,8 @@ class MainWindow(QtGui.QMainWindow):
 
         dc.axes.set_zlim3d(axes_limits[2])
         dc.axes.set_zlabel('Z')
+
+        dc.axes.plot([1],[1],[1])
 
         l.addWidget(dc)
 

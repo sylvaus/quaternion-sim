@@ -1,9 +1,7 @@
-from quaternion import *
-from vector_utils import *
-from cell_phone_connect import *
-
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
+from quaternion.vector_utils import *
 
 
 class Parallelepiped(object):

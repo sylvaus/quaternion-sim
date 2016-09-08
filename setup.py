@@ -1,0 +1,12 @@
+from distutils.core import setup
+
+setup(
+    name='quaternion-sim',
+    version='0.1',
+    packages=[''],
+    url='https://github.com/sylvaus/quaternion-sim',
+    license='',
+    author='Py',
+    author_email='',
+    description=''
+)

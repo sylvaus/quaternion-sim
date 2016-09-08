@@ -1,5 +1,6 @@
 import numpy as np
-import rotation_matrix as rotm
+
+from quaternion import rotation_matrix as rotm
 
 
 class Quaternion(object):
