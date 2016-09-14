@@ -1,14 +1,19 @@
 from PyQt4 import QtCore
 from PyQt4 import QtGui
+from numpy import ndarray, array
 
 from canvas_opengl_qt import glWidget
+from quaternion.pose import Pose
+from quaternion.quaternion import Quaternion
 
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
 
-        self.widget = glWidget(self)
+        pose = Pose(Quaternion(), array([0,0,-10.0]))
+
+        self.widget = glWidget(self, camera_pose=pose)
         self.button = QtGui.QPushButton('Reset', self)
 
         mainLayout = QtGui.QHBoxLayout()

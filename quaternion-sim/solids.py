@@ -14,8 +14,8 @@ class Solids(object):
                  init_pose: Pose = Pose(),
                  mass: float = 1.0,
                  inertia: matrix = identity(3),
-                 ambient_color: list = [1, 1, 1, 0],
-                 diffuse_color: list = [1, 1, 1, 0]):
+                 ambient_color: list = [0.0, 0.0, 0.0, 0],
+                 diffuse_color: list = [0.0, 0.0, 0.0, 0]):
 
         self.pose = pose
         self.init_pose = init_pose
@@ -108,7 +108,7 @@ class Sphere(Solids):
 
     def draw(self):
         self.opgl_move_to_pose()
-        self.apply_material()
+        #self.apply_material()
 
         # draw sphere
         quad = gluNewQuadric()

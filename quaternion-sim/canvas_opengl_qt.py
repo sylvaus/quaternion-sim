@@ -33,6 +33,8 @@ class glWidget(QGLWidget):
         self.diffuse_light_position = diffuse_light_position
 
     def paintGL(self):
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
         for object in self.objects:
             object.draw()
 
@@ -59,6 +61,7 @@ class glWidget(QGLWidget):
         glTranslatef(self.camera_pose.position[0],
                      self.camera_pose.position[1],
                      self.camera_pose.position[2])
+
         glRotatef(self.camera_pose.orientation[0],
                   self.camera_pose.orientation[1],
                   self.camera_pose.orientation[2],
