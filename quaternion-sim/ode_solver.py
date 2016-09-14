@@ -24,7 +24,7 @@ class Runge_Kutta_45(object):
                           w: ndarray,
                           f: ndarray,
                           m: ndarray,
-                          F_fp: ndarray -> ndarray):
+                          F_fp: ndarray):
 
         # translational part
         for i in range(0,4):

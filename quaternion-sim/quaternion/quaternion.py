@@ -1,5 +1,4 @@
 import numpy as np
-
 from quaternion import rotation_matrix as rotm
 
 
@@ -50,6 +49,10 @@ class Quaternion(object):
             return np.identity(3)
         else:
             return rotm.RMatrix(self.get_axis(), self.get_theta())
+
+    def to_opengl_rot(self):
+        axis = self.get_axis()
+        return self.get_theta()*360.0/np.pi, axis[0], axis[1], axis[2]
 
     def __getitem__(self, item):
         return self.array[item]

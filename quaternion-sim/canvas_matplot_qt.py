@@ -1,12 +1,9 @@
 from __future__ import unicode_literals
 import sys
-import os
 import matplotlib.pyplot as plt
 
 from matplotlib.backends import qt_compat
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
-from mpl_toolkits.mplot3d import Axes3D
 
 from matplotlib.animation import FuncAnimation
 
@@ -15,10 +12,6 @@ if use_pyside:
     from PySide import QtGui, QtCore
 else:
     from PyQt4 import QtGui, QtCore
-
-
-progname = os.path.basename(sys.argv[0])
-progversion = "0.1"
 
 
 class DynamicCanvas(FigureCanvas):
