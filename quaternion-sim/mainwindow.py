@@ -6,27 +6,40 @@ from canvas_opengl_qt import glWidget
 from quaternion.pose import Pose
 from quaternion.quaternion import Quaternion
 
+class MainWidget(QtGui.QWidget):
+    def __init__(self, *args, **kwargs):
+        QtGui.QWidget.__init__(self, *args, **kwargs)
+
+
+
 
 class MainWindow(QtGui.QMainWindow):
-    def __init__(self):
-        super(MainWindow, self).__init__()
+    def __init__(self, *args, **kwargs):
+        QtGui.QMainWindow.__init__(self, *args, **kwargs)
 
-        pose = Pose(Quaternion(), array([0,0,-10.0]))
-
-        self.widget = glWidget(self, camera_pose=pose)
+        # Create the graph and button(s) widgets
+        self.graph_widget = glWidget(self)
         self.button = QtGui.QPushButton('Reset', self)
 
+        # Set the layout(s)
         mainLayout = QtGui.QHBoxLayout()
-        mainLayout.addWidget(self.widget)
+        mainLayout.addWidget(self.graph_widget)
         mainLayout.addWidget(self.button)
 
-        self.setCentralWidget(self.widget)
+        # Put the main layout in a widget to set it as the main widget
+        self.main_widget = QtGui.QWidget(self)
+        self.main_widget.setLayout(mainLayout)
+
+        self.setCentralWidget(self.main_widget)
 
         self.pressed_keys = {}
         self.key_overflow = 128
 
+    def set_camera_pose(self, pose: Pose):
+        self.graph_widget.set_camera_pos(pose)
+
     def add_object(self, object):
-        self.widget.add_object(object)
+        self.graph_widget.add_object(object)
 
     def keyPressEvent(self, event):
         # Memorize all key pressed
@@ -42,7 +55,7 @@ class MainWindow(QtGui.QMainWindow):
 
 
         timer = QtCore.QTimer(self)
-        timer.timeout.connect(self.widget.updateGL)
+        timer.timeout.connect(self.graph_widget.updateGL)
         timer.start(refreshing_period)
 
         self.show()

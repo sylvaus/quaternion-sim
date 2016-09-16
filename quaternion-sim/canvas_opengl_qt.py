@@ -5,6 +5,9 @@ from PyQt4.QtOpenGL import *
 from quaternion.quaternion import Quaternion
 from quaternion.pose import Pose
 from solids import Solids
+from numpy import pi
+
+rad_to_deg = 180/pi
 
 class glWidget(QGLWidget):
 
@@ -62,10 +65,11 @@ class glWidget(QGLWidget):
                      self.camera_pose.position[1],
                      self.camera_pose.position[2])
 
-        glRotatef(self.camera_pose.orientation[0],
+        glRotatef(self.camera_pose.orientation.get_theta()*rad_to_deg,
                   self.camera_pose.orientation[1],
                   self.camera_pose.orientation[2],
                   self.camera_pose.orientation[3])
+
         glMatrixMode(GL_MODELVIEW)
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -73,6 +77,8 @@ class glWidget(QGLWidget):
 
         self.init_lights()
 
+    def set_camera_pos(self, pose: Pose):
+        self.camera_pose = pose
 
     def set_ambient_light(self, color: list):
         self.ambient_light_color = color

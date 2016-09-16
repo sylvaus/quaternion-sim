@@ -2,10 +2,12 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from numpy import matrix, ndarray, array
+from numpy import matrix, ndarray, array, pi
 from numpy.core.numeric import identity
 from quaternion.quaternion import Quaternion
 from quaternion.pose import Pose
+
+rad_to_deg = 180/pi
 
 
 class Solids(object):
@@ -88,7 +90,7 @@ class Solids(object):
                      self.pose.position[2])
 
         # Rotate to the right orientation
-        glRotatef(self.pose.orientation[0],
+        glRotatef(self.pose.orientation.get_theta()*rad_to_deg,
                   self.pose.orientation[1],
                   self.pose.orientation[2],
                   self.pose.orientation[3])
@@ -108,7 +110,7 @@ class Sphere(Solids):
 
     def draw(self):
         self.opgl_move_to_pose()
-        #self.apply_material()
+        self.apply_material()
 
         # draw sphere
         quad = gluNewQuadric()
@@ -130,7 +132,7 @@ class Parallepiped(Solids):
         self.height = height
 
     def draw(self):
-        self.move_to_pose()
+        self.opgl_move_to_pose()
         self.apply_material()
 
         # draw parallelepiped
