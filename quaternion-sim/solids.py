@@ -2,7 +2,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from numpy import matrix, ndarray, array, pi
+from numpy import matrix, ndarray, pi
 from numpy.core.numeric import identity
 from quaternion.quaternion import Quaternion
 from quaternion.pose import Pose
@@ -51,10 +51,10 @@ class Solids(object):
         self.inertia = inertia
 
     def rotate(self, quat: Quaternion):
-        self.orientation = quat * self.orientation
+        self.pose.rotate(quat)
 
     def translate(self, delta_pos: ndarray):
-        self.position = delta_pos + self.position
+        self.pose.translate(delta_pos)
 
     def get_pose(self):
         return self.pose
@@ -90,7 +90,7 @@ class Solids(object):
                      self.pose.position[2])
 
         # Rotate to the right orientation
-        glRotatef(self.pose.orientation.get_theta()*rad_to_deg,
+        glRotatef(self.pose.orientation.get_theta(rad=False),
                   self.pose.orientation[1],
                   self.pose.orientation[2],
                   self.pose.orientation[3])

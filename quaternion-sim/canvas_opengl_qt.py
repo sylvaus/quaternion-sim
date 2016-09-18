@@ -2,12 +2,9 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from PyQt4.QtOpenGL import *
-from quaternion.quaternion import Quaternion
 from quaternion.pose import Pose
 from solids import Solids
-from numpy import pi
 
-rad_to_deg = 180/pi
 
 class glWidget(QGLWidget):
 
@@ -65,7 +62,7 @@ class glWidget(QGLWidget):
                      self.camera_pose.position[1],
                      self.camera_pose.position[2])
 
-        glRotatef(self.camera_pose.orientation.get_theta()*rad_to_deg,
+        glRotatef(self.camera_pose.orientation.get_theta(rad=False),
                   self.camera_pose.orientation[1],
                   self.camera_pose.orientation[2],
                   self.camera_pose.orientation[3])

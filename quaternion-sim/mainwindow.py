@@ -1,16 +1,7 @@
 from PyQt4 import QtCore
 from PyQt4 import QtGui
-from numpy import ndarray, array
-
 from canvas_opengl_qt import glWidget
 from quaternion.pose import Pose
-from quaternion.quaternion import Quaternion
-
-class MainWidget(QtGui.QWidget):
-    def __init__(self, *args, **kwargs):
-        QtGui.QWidget.__init__(self, *args, **kwargs)
-
-
 
 
 class MainWindow(QtGui.QMainWindow):
