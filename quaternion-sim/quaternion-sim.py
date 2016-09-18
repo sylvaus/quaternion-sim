@@ -1,9 +1,10 @@
 import sys
-from quaternion.quaternion import Quaternion, quat_from_axis_and_theta
+import quaternion.quaternion
 from quaternion.pose import Pose
 from solids import Sphere, Parallepiped
 from mainwindow import MainWindow
 from PyQt4 import QtGui
+
 
 class Simulation(object):
     def __init__(self):
@@ -13,10 +14,11 @@ class Simulation(object):
         self.qt_app = QtGui.QApplication(sys.argv)
 
         self.window = MainWindow()
-        quat = quat_from_axis_and_theta([1,1,0],0.78)
-        self.window.set_camera_pose(Pose(quat,[0,0,-30.0]))
+        quat = quaternion.quaternion.quat_x(-45, False)
+        self.window.set_camera_pose(Pose(quat, [0, 0, -30.0]))
         self.window.add_object(self.ball)
         self.window.add_object(self.plate)
+        self.window.set_cyclic_call(self.update_object_poses)
 
     def start_simulation(self):
 
@@ -24,7 +26,10 @@ class Simulation(object):
 
         sys.exit(self.qt_app.exec_())
 
-
+    def update_object_poses(self):
+        keys = self.window.get_pressed_keys(True)
+        if len(keys) > 0:
+            print(keys)
 
 
 def main():

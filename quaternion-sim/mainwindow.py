@@ -26,6 +26,8 @@ class MainWindow(QtGui.QMainWindow):
         self.pressed_keys = {}
         self.key_overflow = 128
 
+        self.use_cyclic_call = None
+
     def set_camera_pose(self, pose: Pose):
         self.graph_widget.set_camera_pos(pose)
 
@@ -35,18 +37,35 @@ class MainWindow(QtGui.QMainWindow):
     def keyPressEvent(self, event):
         # Memorize all key pressed
 
-        if self.pressed_keys.has_keys(event.key()):
+        if self.pressed_keys.get(event.key()) is None:
             self.pressed_keys[event.key()] = 1
         else:
             if self.pressed_keys[event.key()] < 128:
                 self.pressed_keys[event.key()] += 1
 
 
-    def start(self, refreshing_period=100):
+    def start(self, refreshing_period: int=100):
 
 
         timer = QtCore.QTimer(self)
-        timer.timeout.connect(self.graph_widget.updateGL)
+        timer.timeout.connect(self.cyclic_call)
         timer.start(refreshing_period)
 
         self.show()
+
+    def cyclic_call(self):
+        if callable(self.user_cyclic_call):
+            self.user_cyclic_call()
+        self.graph_widget.updateGL()
+
+    def set_cyclic_call(self, func):
+        self.user_cyclic_call = func
+
+    def get_pressed_keys(self, delete:bool=False):
+        if delete:
+            temp = self.pressed_keys
+            self.pressed_keys = {}
+            return temp
+
+        else:
+            return self.pressed_keys

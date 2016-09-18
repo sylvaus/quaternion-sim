@@ -6,12 +6,14 @@ a ball on a plate and teach a bit if control theory
 ### Getting Started
 Clone this repository
 Make sure you have all the required python packages
-Run main.py
+Run quaternion-sim.py
 
 ### Status 
 - Implementation of Quaternion class (easy): Done
 - Implementation of the graphic side (medium): Expected soon
--
+    - Solids (ball and plate): Done
+    - Axes: in going 
+- Ball plate dynamics equation: Not started 
 
 
 ### Requirements
@@ -21,4 +23,4 @@ Run main.py
 - matplolib (developed with V1.5.1)
 - PyOpenGL (developed with V3.1.0)
 
-The first three are contained in the Anaconda Python 3.5 distribution
+The first four are contained in the Anaconda Python 3.5 distribution

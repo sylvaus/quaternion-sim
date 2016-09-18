@@ -82,7 +82,7 @@ def quat_log(quat: Quaternion) -> Quaternion:
     return Quaternion(np.insert(quat.get_theta() * quat.get_axis(), 0, 0))
 
 
-def quat_x(theta: float, rad: bool = True) -> Quaternion:
+def quat_x(theta: float, rad: object = True) -> Quaternion:
     if rad:
         return Quaternion([np.cos(theta / 2), np.sin(theta / 2), 0, 0])
     else:
