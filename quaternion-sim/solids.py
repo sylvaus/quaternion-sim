@@ -4,16 +4,20 @@ from OpenGL.GLUT import *
 
 from numpy import matrix, ndarray, pi
 from numpy.core.numeric import identity
+
 from quaternion.quaternion import Quaternion
 from quaternion.pose import Pose
+
+from frames import Frame
 
 rad_to_deg = 180/pi
 
 
-class Solids(object):
+class Solid(object):
     def __init__(self,
                  pose: Pose = Pose(),
                  init_pose: Pose = Pose(),
+                 frame: Frame = Frame("fixed",Pose(), None),
                  mass: float = 1.0,
                  inertia: matrix = identity(3),
                  ambient_color: list = [0.0, 0.0, 0.0, 0],
@@ -21,6 +25,7 @@ class Solids(object):
 
         self.pose = pose
         self.init_pose = init_pose
+        self.frame = frame
         self.mass = mass
         self.inertia = inertia
         self.ambient_color = ambient_color
@@ -103,9 +108,9 @@ class Solids(object):
         glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20)
 
 
-class Sphere(Solids):
+class Sphere(Solid):
     def __init__(self, radius: int = 1, *args):
-        Solids.__init__(self, *args)
+        Solid.__init__(self, *args)
         self.radius = radius
 
     def draw(self):
@@ -120,13 +125,13 @@ class Sphere(Solids):
         gluSphere(quad, self.radius, 20, 20)
 
 
-class Parallepiped(Solids):
+class Parallepiped(Solid):
     def __init__(self,
                  length: int = 1,
                  width: int = 1,
                  height: int = 1,
                  *args):
-        Solids.__init__(self, *args)
+        Solid.__init__(self, *args)
         self.length = length
         self.width = width
         self.height = height

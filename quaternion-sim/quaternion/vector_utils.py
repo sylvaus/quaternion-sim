@@ -1,14 +1,12 @@
-import numpy as np
+from numpy import ndarray, array, matrix, dot
 
-def vectorize(array) -> np.ndarray:
+def vectorize(array: ndarray) -> ndarray:
     """
     Return an np.ndarray of shape (3,)
     :param array:
-    :type array: list or np.ndarray
-    :return: np.ndarray
+    :type array: ndarray
+    :return: ndarray
     """
-
-    array = np.array(array)
 
     if array.shape == (3,1):
         return array.reshape((3,))
@@ -18,3 +16,6 @@ def vectorize(array) -> np.ndarray:
         return array.reshape((3,))
 
     return array
+
+def matrix_vector_mul(mat: matrix, vect: array):
+    return vectorize(dot(mat,vect))

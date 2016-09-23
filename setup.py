@@ -9,5 +9,6 @@ setup(
     author='Py',
     author_email='',
     description='',
-    requires=['numpy', 'PyQt4',"OpenGL"]
+    requires=['numpy', 'PyQt4',"OpenGL","PyOpenGL_accelerate"],
+    install_requires=['numpy',"PyOpenGL","PyOpenGL_accelerate"]
 )

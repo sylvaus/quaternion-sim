@@ -5,11 +5,16 @@ class Pose(object):
     def __init__(self,
                  orientation: Quaternion = Quaternion(),
                  position: ndarray = array([0,0,0])):
+
         self.orientation = orientation
-        self.position = position
+
+        assert position.shape == (3,) or position.shape == (3,1), \
+            "The position should be an array of size (3,1)"
+
+        self.position = position.reshape(3,1)
 
     def translate(self, translation: ndarray):
-        self.position += translation
+        self.position += translation.reshape(3,1)
 
     def rotate(self, orientation: Quaternion):
         self.orientation *= orientation

@@ -3,7 +3,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from PyQt4.QtOpenGL import *
 from quaternion.pose import Pose
-from solids import Solids
+from solids import Solid
 
 
 class glWidget(QGLWidget):
@@ -69,9 +69,6 @@ class glWidget(QGLWidget):
 
         glMatrixMode(GL_MODELVIEW)
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
-
         self.init_lights()
 
     def set_camera_pos(self, pose: Pose):
@@ -94,7 +91,7 @@ class glWidget(QGLWidget):
         glLightfv(GL_LIGHT1, GL_AMBIENT, self.ambient_light_color)
         glEnable(GL_LIGHT1)
 
-    def add_object(self, object: Solids):
+    def add_object(self, object: Solid):
         self.objects.append(object)
 
 
