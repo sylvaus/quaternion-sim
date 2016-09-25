@@ -1,7 +1,5 @@
 from quaternion.pose import Pose
 from quaternion.pose import Quaternion
-from solids import Solid
-
 
 class Frame(object):
     def __init__(self, name: str, pose: Pose, ref_frame: str):
@@ -31,10 +29,10 @@ class FrameManager(object):
         else:
             raise "The reference frame {0} does not exist".format(frame.ref_frame)
 
-    def solid_pose_in_frame(self, solid: Solid, frame: Frame) -> Pose:
+    def solid_pose_in_frame(self, solid, frame: Frame) -> Pose:
         frame_seqs = self.get_frame_seq(frame, solid.frame)
 
-    def get_frame_seq(self, from_frame: Frame, to_frame: Frame) -> [list(str), list(str)]:
+    def get_frame_seq(self, from_frame: Frame, to_frame: Frame) -> list:
         """
         get_frame_seq returns a two lists containing:
             - the forward frame sequence which goes from:

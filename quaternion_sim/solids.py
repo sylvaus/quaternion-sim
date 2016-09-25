@@ -17,7 +17,7 @@ class Solid(object):
     def __init__(self,
                  pose: Pose = Pose(),
                  init_pose: Pose = Pose(),
-                 frame: Frame = Frame("fixed",Pose(), None),
+                 frame: Frame = Frame("fixed", Pose(), None),
                  mass: float = 1.0,
                  inertia: matrix = identity(3),
                  ambient_color: list = [0.0, 0.0, 0.0, 0],
