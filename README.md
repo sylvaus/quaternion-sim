@@ -18,6 +18,7 @@ Run quaternion-sim.py
     - Solids (ball and plate): Done
     - Axes: On going (require Frame class)
 - Ball plate dynamics equation: Not started 
+- Tests: Just started
 
 
 ### Requirements
@@ -26,6 +27,8 @@ Run quaternion-sim.py
 - PyQt4 (developed with V4.11.4) 
     - Installed using Homebrew on Mac
 - matplolib (developed with V1.5.1)
+    - Not required anymore (switched to OpenGl for 
+      visual representation) 
 - PyOpenGL (developed with V3.1.0)
 
 The first four are contained in the Anaconda Python 3.5 distribution.
