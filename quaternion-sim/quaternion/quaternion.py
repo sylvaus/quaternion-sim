@@ -28,7 +28,7 @@ class Quaternion(object):
         return str(self.array)
 
     def normalize(self):
-        assert not (np.allclose(self.array, np.array([0, 0, 0, 0])))\
+        assert not (np.allclose(self.array, np.array([0, 0, 0, 0]))) \
             , "Cannot normalize [0,0,0,0] quaternion"
         self.array /= np.linalg.norm(self.array)
 
@@ -123,7 +123,7 @@ def quat_from_axis_and_theta(axis: np.ndarray, theta: float, rad: bool = True) -
 def quat_from_2_vectors(v1: np.ndarray, v2: np.ndarray) -> Quaternion:
     assert not (np.allclose(v1, np.array([0, 0, 0]))) or \
            not (np.allclose(v2, np.array([0, 0, 0]))) \
-                , "One of the vector is a zero vector"
+        , "One of the vector is a zero vector"
 
     axis = np.cross(v1, v2)
     v1v2_norm = np.linalg.norm(v1) * np.linalg.norm(v2)

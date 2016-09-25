@@ -11,7 +11,6 @@ class Parallelepiped(object):
                  height: float = 1,
                  center: np.ndarray = np.array([0, 0, 0]),
                  orientation: Quaternion = Quaternion()):
-
         # Set the characteristics of the cube
         self.orientation = orientation
         self.center = center
@@ -60,5 +59,4 @@ class Cube(Parallelepiped):
                  length: float = 1,
                  center: np.ndarray = np.array([0, 0, 0]),
                  orientation: Quaternion = Quaternion()):
-
         super().__init__(length, length, length, center, orientation)

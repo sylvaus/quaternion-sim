@@ -7,7 +7,6 @@ class Sphere(object):
                  radius: float = 1,
                  center: np.ndarray = np.array([0, 0, 0]),
                  orientation: Quaternion = Quaternion()):
-
         self.orientation = orientation
         self.center = center
         self.radius = radius
@@ -25,9 +24,9 @@ class Sphere(object):
     def draw(self, axes: Axes3D):
         R = (self.orientation * (self.orientation_origin.inverse())).to_rot_matrix()
 
-        xx = R[0,0]*self.x + R[0,1]*self.y + R[0,2]*self.z
-        yy = R[1,0]*self.x + R[1,1]*self.y + R[1,2]*self.z
-        zz = R[2,0]*self.x + R[2,1]*self.y + R[2,2]*self.z
+        xx = R[0, 0] * self.x + R[0, 1] * self.y + R[0, 2] * self.z
+        yy = R[1, 0] * self.x + R[1, 1] * self.y + R[1, 2] * self.z
+        zz = R[2, 0] * self.x + R[2, 1] * self.y + R[2, 2] * self.z
 
         axes.plot_surface(xx, yy, zz, rstride=4, cstride=4, color='b')
         return axes,

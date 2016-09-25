@@ -5,8 +5,8 @@ import threading
 import queue
 import numpy as np
 
-class CellPhoneConnector(object):
 
+class CellPhoneConnector(object):
     def __init__(self, addr, port):
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -20,9 +20,8 @@ class CellPhoneConnector(object):
         self.queue = queue.Queue()
         self.values = []
 
-
-        for i in range(0,1):
-            self.values.append(np.array([0,0,0]))
+        for i in range(0, 1):
+            self.values.append(np.array([0, 0, 0]))
 
     def start_communication(self):
         # Listen for incoming connections
@@ -30,7 +29,6 @@ class CellPhoneConnector(object):
         self.thread = threading.Thread(target=self.com_thread)
         self.thread.daemon = True
         self.thread.start()
-
 
     def com_thread(self):
         self.sock.listen(1)
@@ -46,9 +44,9 @@ class CellPhoneConnector(object):
                 while True:
                     data = connection.recv(500).decode()
                     values = self.parse_data(data)
-                    if not(values == None):
-                        #filtering
-                        self.values[0] = 1/4.0*(3.0*self.values[0] + value[0])
+                    if not (values is None):
+                        # filtering
+                        self.values[0] = 1 / 4.0 * (3.0 * self.values[0] + value[0])
                         self.queue.put(self.values[0])
                         print(value)
 
@@ -63,16 +61,13 @@ class CellPhoneConnector(object):
             measures = data.split("[")
             for measure in measures:
                 if "]" in measure:
-
                     msg = measure.split(";")
                     result.append([msg[0],
-                                [msg[i] for i in range(1,len(msg))]])
-
+                                   [msg[i] for i in range(1, len(msg))]])
 
             print(result)
 
         return None
-
 
 
 def test():

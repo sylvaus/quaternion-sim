@@ -7,7 +7,6 @@ from solids import Solid
 
 
 class glWidget(QGLWidget):
-
     def __init__(self,
                  parent,
                  camera_pose: Pose = Pose(),
@@ -43,7 +42,6 @@ class glWidget(QGLWidget):
     def updateGL(self):
         self.glDraw()
 
-
     def initializeGL(self):
         glClearColor(self.back_color[0], self.back_color[1],
                      self.back_color[2], self.back_color[3])
@@ -57,7 +55,7 @@ class glWidget(QGLWidget):
 
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(45.0,1.33,0.1, 100.0)
+        gluPerspective(45.0, 1.33, 0.1, 100.0)
         glTranslatef(self.camera_pose.position[0],
                      self.camera_pose.position[1],
                      self.camera_pose.position[2])
@@ -91,9 +89,5 @@ class glWidget(QGLWidget):
         glLightfv(GL_LIGHT1, GL_AMBIENT, self.ambient_light_color)
         glEnable(GL_LIGHT1)
 
-    def add_object(self, object: Solid):
-        self.objects.append(object)
-
-
-
-
+    def add_solid(self, solid: Solid):
+        self.objects.append(solid)

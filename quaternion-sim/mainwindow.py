@@ -2,6 +2,7 @@ from PyQt4 import QtCore
 from PyQt4 import QtGui
 from canvas_opengl_qt import glWidget
 from quaternion.pose import Pose
+from solids import Solid
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -26,13 +27,13 @@ class MainWindow(QtGui.QMainWindow):
         self.pressed_keys = {}
         self.key_overflow = 128
 
-        self.use_cyclic_call = None
+        self.user_cyclic_call = None
 
     def set_camera_pose(self, pose: Pose):
         self.graph_widget.set_camera_pos(pose)
 
-    def add_object(self, object):
-        self.graph_widget.add_object(object)
+    def add_solid(self, solid: Solid):
+        self.graph_widget.add_solid(solid)
 
     def keyPressEvent(self, event):
         # Memorize all key pressed
@@ -43,9 +44,7 @@ class MainWindow(QtGui.QMainWindow):
             if self.pressed_keys[event.key()] < 128:
                 self.pressed_keys[event.key()] += 1
 
-
-    def start(self, refreshing_period: int=100):
-
+    def start(self, refreshing_period: int = 100):
 
         timer = QtCore.QTimer(self)
         timer.timeout.connect(self.cyclic_call)
@@ -61,7 +60,7 @@ class MainWindow(QtGui.QMainWindow):
     def set_cyclic_call(self, func):
         self.user_cyclic_call = func
 
-    def get_pressed_keys(self, delete:bool=False):
+    def get_pressed_keys(self, delete: bool = False):
         if delete:
             temp = self.pressed_keys
             self.pressed_keys = {}

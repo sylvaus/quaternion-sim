@@ -12,7 +12,6 @@ class Runge_Kutta_45(object):
     def __init__(self,
                  mass: float = 1.0,
                  inertia: matrix = identity(3)):
-
         self.mass = mass
         self.inertia = inertia
 
@@ -25,9 +24,8 @@ class Runge_Kutta_45(object):
                           f: ndarray,
                           m: ndarray,
                           F_fp: ndarray):
-
         # translational part
-        for i in range(0,4):
-            v = v + f*t/4
+        for i in range(0, 4):
+            v = v + f * t / 4
 
         return

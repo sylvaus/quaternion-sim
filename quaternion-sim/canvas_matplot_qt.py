@@ -41,9 +41,9 @@ class DynamicCanvas(FigureCanvas):
                                    QtGui.QSizePolicy.Expanding,
                                    QtGui.QSizePolicy.Expanding)
 
-        #timer = QtCore.QTimer(self)
-        #timer.timeout.connect(self.update_figure)
-        #timer.start(timer_period)
+        # timer = QtCore.QTimer(self)
+        # timer.timeout.connect(self.update_figure)
+        # timer.start(timer_period)
 
         self.update_func = update_func
         self.pressed_keys = pressed_keys
@@ -85,14 +85,14 @@ class MainWindow(QtGui.QMainWindow):
         elif e.key() == QtCore.Qt.Key_S:
             self.pressed_keys.append(1)
         elif e.key() == QtCore.Qt.Key_Q:
-             self.pressed_keys.append(2)
+            self.pressed_keys.append(2)
         elif e.key() == QtCore.Qt.Key_D:
             self.pressed_keys.append(3)
 
     def add_graph(self,
-                 update_func,
-                 timer_period=100,
-                 axes_limits=[[-2.0, 2.0], [-2.0, 2.0], [-2.0, 2.0]]):
+                  update_func,
+                  timer_period=100,
+                  axes_limits=[[-2.0, 2.0], [-2.0, 2.0], [-2.0, 2.0]]):
 
         l = QtGui.QVBoxLayout(self.main_widget)
         dc = DynamicCanvas(update_func, self.main_widget, timer_period, self.pressed_keys)
@@ -107,7 +107,7 @@ class MainWindow(QtGui.QMainWindow):
         dc.axes.set_zlim3d(axes_limits[2])
         dc.axes.set_zlabel('Z')
 
-        dc.axes.plot([1],[1],[1])
+        dc.axes.plot([1], [1], [1])
 
         l.addWidget(dc)
 

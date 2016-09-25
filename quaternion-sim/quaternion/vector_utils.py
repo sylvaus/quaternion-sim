@@ -1,21 +1,16 @@
 from numpy import ndarray, array, matrix, dot
 
-def vectorize(array: ndarray) -> ndarray:
+
+def vectorize(vec: ndarray) -> ndarray:
     """
-    Return an np.ndarray of shape (3,)
+    Return an np.ndarray of shape (3,1)
     :param array:
     :type array: ndarray
     :return: ndarray
     """
+    return vec.reshape(3,1)
 
-    if array.shape == (3,1):
-        return array.reshape((3,))
 
-    if array.shape == (1,3):
-        array = array.transpose()
-        return array.reshape((3,))
+def matrix_vector_mul(mat: matrix, vec: array):
+    return dot(mat, vec.reshape(3,1)).reshape(3, 1)
 
-    return array
-
-def matrix_vector_mul(mat: matrix, vect: array):
-    return vectorize(dot(mat,vect))

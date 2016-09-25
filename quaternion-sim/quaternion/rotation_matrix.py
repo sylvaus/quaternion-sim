@@ -40,13 +40,14 @@ def RzMatrix(theta):
 def RMatrix(axis, theta):
     """
     Return the rotation matrix about the axis with an angle of theta(rad)
+    :param axis:
     :param theta:
     :return: np.matrix
     """
     if np.linalg.norm(axis) == 0:
         return np.identity(3)
     else:
-        axis = axis / np.linalg.norm(axis)
+        axis /= np.linalg.norm(axis)
         return cos(theta) * np.identity(3) + \
                sin(theta) * cross_product_matrix(axis) + \
                (1.0 - cos(theta)) * tensor_product(axis, axis)

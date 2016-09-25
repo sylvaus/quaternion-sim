@@ -34,7 +34,6 @@ class Simulation(object):
                 self.plate.rotate(quat.quat_x(3, False))
 
 
-
 def main():
     sim = Simulation()
     sim.start_simulation()
