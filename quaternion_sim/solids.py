@@ -10,6 +10,8 @@ from quaternion.pose import Pose
 
 from frames import Frame
 
+import copy as cp
+
 rad_to_deg = 180/pi
 
 
@@ -61,28 +63,34 @@ class Solid(object):
     def translate(self, delta_pos: ndarray):
         self.pose.translate(delta_pos)
 
-    def get_pose(self):
-        return self.pose
+    def get_pose(self, dcopy=False) -> Pose:
+        if dcopy:
+            return cp.deepcopy(self.pose)
+        else:
+            return self.pose
 
-    def get_position(self):
+    def get_position(self) -> ndarray:
         return self.pose.position
 
-    def get_orientation(self):
+    def get_orientation(self) -> Quaternion:
         return self.pose.orientation
 
-    def get_init_pose(self):
-        return self.init_pose
+    def get_init_pose(self, dcopy=False) -> Pose:
+        if dcopy:
+            return cp.deepcopy(self.init_pose)
+        else:
+            return self.init_pose
 
-    def get_init_position(self):
+    def get_init_position(self) -> ndarray:
         return self.init_pose.position
 
-    def get_init_orientation(self):
+    def get_init_orientation(self) -> Quaternion:
         return self.init_pose.orientation
 
-    def get_mass(self):
+    def get_mass(self) -> float:
         return self.mass
 
-    def get_inertia(self):
+    def get_inertia(self) -> matrix:
         return self.inertia
 
     def opgl_move_to_pose(self):

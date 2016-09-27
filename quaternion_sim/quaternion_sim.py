@@ -31,7 +31,7 @@ class Simulation(object):
         keys = self.window.get_pressed_keys(True)
         if len(keys) > 0:
             if QtCore.Qt.Key_A in keys:
-                self.plate.rotate(quat.quat_x(3, False))
+                self.plate.rotate(quat.quaternion_x(3, False))
 
 
 def main():
