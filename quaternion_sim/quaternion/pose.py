@@ -37,7 +37,8 @@ class Pose(object):
             return False
 
     def __repr__(self):
-        return "position: {0} \norientation: {1}".format(str(self.position),str(self.orientation))
+        return "position: {0} \norientation: {1}".format(str(self.position.reshape(1,3)),
+                                                         str(self.orientation))
 
     def __add__(self, pose):
         return Pose(self.orientation * pose.orientation,

@@ -9,7 +9,7 @@ class Quaternion(object):
     This quaternion uses the convention cos(theta/2) = q0, sin(theta/2)*axis = [q1, q2, q3]]
     """
 
-    def __init__(self, array:np.ndarray=None):
+    def __init__(self, array:np.ndarray=None, rot_quaternion:bool=False):
         if array is None:
             self.array = np.array([1, 0, 0, 0], dtype=float)
 
@@ -23,6 +23,11 @@ class Quaternion(object):
 
         else:
             raise ValueError("Cannot make a quaternion from the given type")
+
+        self.rot_quaternion = rot_quaternion
+        if self.rot_quaternion:
+            self.check_rot_quat()
+
 
     def __repr__(self):
         return str(self.array)
@@ -38,7 +43,8 @@ class Quaternion(object):
     def inverse(self) -> 'Quaternion':
         q0 = np.array(self.array[0])
         qv = -self.array[1:4]
-        return Quaternion(np.insert(qv, 0, q0))
+        return Quaternion(np.insert(qv, 0, q0),
+                          self.rot_quaternion)
 
     def log(self) -> 'Quaternion':
         return quaternion_log(self)
@@ -58,6 +64,10 @@ class Quaternion(object):
         else:
             return rotm.RMatrix(self.get_axis(), self.get_theta())
 
+    def check_rot_quat(self):
+        if self.array[0] < 0:
+            self.array = -self.array
+
     def __getitem__(self, item):
         return self.array[item]
 
@@ -74,7 +84,8 @@ class Quaternion(object):
         q0 = np.array(self.array[0] * other.array[0] - np.dot(self.array[1:4], other.array[1:4]))
         qv = self.array[0] * other.array[1:4] + other.array[0] * self.array[1:4] + \
              np.cross(self.array[1:4], other.array[1:4])
-        return Quaternion(np.insert(qv, 0, q0))
+        return Quaternion(np.insert(qv, 0, q0),
+                          self.rot_quaternion)
 
 
 
@@ -84,26 +95,32 @@ def quaternion_log(quat: Quaternion) -> Quaternion:
 
 def quaternion_x(theta: float, rad: bool = True) -> Quaternion:
     if rad:
-        return Quaternion([np.cos(theta / 2), np.sin(theta / 2), 0, 0])
+        return Quaternion([np.cos(theta / 2), np.sin(theta / 2), 0, 0],
+                          True)
     else:
         theta = theta / rad_to_deg
-        return Quaternion([np.cos(theta / 2), np.sin(theta / 2), 0, 0])
+        return Quaternion([np.cos(theta / 2), np.sin(theta / 2), 0, 0],
+                          True)
 
 
 def quaternion_y(theta: float, rad: bool = True) -> Quaternion:
     if rad:
-        return Quaternion([np.cos(theta / 2), 0, np.sin(theta / 2), 0])
+        return Quaternion([np.cos(theta / 2), 0, np.sin(theta / 2), 0],
+                          True)
     else:
         theta = theta / rad_to_deg
-        return Quaternion([np.cos(theta / 2), 0, np.sin(theta / 2), 0])
+        return Quaternion([np.cos(theta / 2), 0, np.sin(theta / 2), 0],
+                          True)
 
 
 def quaternion_z(theta: float, rad: bool = True) -> Quaternion:
     if rad:
-        return Quaternion([np.cos(theta / 2), 0, 0, np.sin(theta / 2)])
+        return Quaternion([np.cos(theta / 2), 0, 0, np.sin(theta / 2)],
+                          True)
     else:
         theta = theta / rad_to_deg
-        return Quaternion([np.cos(theta / 2), 0, np.sin(theta / 2), 0])
+        return Quaternion([np.cos(theta / 2), 0, 0,np.sin(theta / 2)],
+                          True)
 
 
 def quaternion_axis_theta(axis: np.ndarray, theta: float, rad: bool = True) -> Quaternion:
@@ -117,7 +134,8 @@ def quaternion_axis_theta(axis: np.ndarray, theta: float, rad: bool = True) -> Q
     if not rad:
         theta = theta / rad_to_deg
 
-    return Quaternion(np.insert(axis * np.sin(theta / 2.0), 0, np.cos(theta / 2.0)))
+    return Quaternion(np.insert(axis * np.sin(theta / 2.0), 0, np.cos(theta / 2.0)),
+                      True)
 
 
 def quaternion_2_vectors(v1: np.ndarray, v2: np.ndarray) -> Quaternion:

@@ -68,11 +68,12 @@ class FrameManager(object):
             pose_fixed.position = frame.pose.position + \
                                   frame.pose.orientation.to_rot_matrix()*pose_fixed.position
 
-        pose_fixed = pose_fixed.inverse()
 
-        pose.rotate(pose_fixed.orientation)
-        pose.position = pose_fixed.position + \
-                        pose_fixed.orientation.to_rot_matrix() * pose.position
+        print(pose_fixed)
+        print(pose)
+        pose.rotate(pose_fixed.orientation.inverse())
+        pose.position = pose_fixed.orientation.to_rot_matrix() * \
+                        (pose.position - pose_fixed.position)
 
         return pose
 

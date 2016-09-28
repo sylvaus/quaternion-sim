@@ -1,7 +1,8 @@
 import unittest
 
 from frames import Frame, FrameManager
-from quaternion.quaternion import Quaternion, quaternion_axis_theta, quaternion_x
+from quaternion.quaternion import Quaternion, quaternion_axis_theta, quaternion_x, \
+                                  quaternion_z
 from quaternion.pose import Pose
 from numpy import array, allclose
 from solids import Solid
@@ -66,6 +67,7 @@ class TestFrame(unittest.TestCase):
         vec_null = array([0,0,0])
 
         quat_x = quaternion_x(90, False)
+        quat_z = quaternion_z(90, False)
         quat_null = Quaternion()
 
         fixed_frame = Frame("fixed", Pose(), "")
@@ -73,12 +75,14 @@ class TestFrame(unittest.TestCase):
         frame_2 = Frame("frame_2", Pose(quat_x,vec_z), "frame_1")
         frame_3 = Frame("frame_3", Pose(quat_x,vec_z), "frame_2")
         frame_4 = Frame("frame_4", Pose(quat_null, vec_x), "fixed")
+        frame_5 = Frame("frame_5", Pose(quat_z, vec_y), "frame_4")
 
         frame_mgr = FrameManager(fixed_frame)
         frame_mgr.add_frame(frame_1)
         frame_mgr.add_frame(frame_2)
         frame_mgr.add_frame(frame_3)
         frame_mgr.add_frame(frame_4)
+        frame_mgr.add_frame(frame_5)
 
         solid = Solid(pose=Pose(quat_x,vec_z), frame=frame_3)
 
@@ -90,6 +94,14 @@ class TestFrame(unittest.TestCase):
         pose = frame_mgr.solid_pose_in_frame(solid, frame_4)
 
         self.assertTrue(res.is_equal(pose), pose)
+
+        res = Pose(quaternion_z(-90, False), array([-1,1,0]))
+        pose = frame_mgr.solid_pose_in_frame(solid, frame_5)
+
+        print(pose)
+        print(res)
+
+        self.assertTrue(res.is_equal(pose))
 
 
 
