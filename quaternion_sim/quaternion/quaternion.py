@@ -9,7 +9,7 @@ class Quaternion(object):
     This quaternion uses the convention cos(theta/2) = q0, sin(theta/2)*axis = [q1, q2, q3]]
     """
 
-    def __init__(self, array:np.ndarray=None, rot_quaternion:bool=False):
+    def __init__(self, array: np.ndarray = None, rot_quaternion: bool = False):
         if array is None:
             self.array = np.array([1, 0, 0, 0], dtype=float)
 
@@ -28,25 +28,24 @@ class Quaternion(object):
         if self.rot_quaternion:
             self.check_rot_quat()
 
-
-    def __repr__(self):
-        return str(self.array)
-
     def normalize(self) -> None:
         assert not (np.allclose(self.array, np.array([0, 0, 0, 0], dtype=float))) \
             , "Cannot normalize [0,0,0,0] quaternion"
-        self.array /= np.linalg.norm(self.array)
+        self.array = self.array / np.linalg.norm(self.array)
 
-    def norm(self) -> float:
+    def inverse(self) -> None:
+        self.array[1:4] = -self.array[1:4]
+
+    def get_norm(self) -> float:
         return np.linalg.norm(self.array)
 
-    def inverse(self) -> 'Quaternion':
+    def get_inverse(self) -> 'Quaternion':
         q0 = np.array(self.array[0])
         qv = -self.array[1:4]
         return Quaternion(np.insert(qv, 0, q0),
                           self.rot_quaternion)
 
-    def log(self) -> 'Quaternion':
+    def get_log(self) -> 'Quaternion':
         return quaternion_log(self)
 
     def get_axis(self) -> np.ndarray:
@@ -68,6 +67,9 @@ class Quaternion(object):
         if self.array[0] < 0:
             self.array = -self.array
 
+    def __repr__(self):
+        return str(self.array)
+
     def __getitem__(self, item):
         return self.array[item]
 
@@ -86,7 +88,6 @@ class Quaternion(object):
              np.cross(self.array[1:4], other.array[1:4])
         return Quaternion(np.insert(qv, 0, q0),
                           self.rot_quaternion)
-
 
 
 def quaternion_log(quat: Quaternion) -> Quaternion:
@@ -119,7 +120,7 @@ def quaternion_z(theta: float, rad: bool = True) -> Quaternion:
                           True)
     else:
         theta = theta / rad_to_deg
-        return Quaternion([np.cos(theta / 2), 0, 0,np.sin(theta / 2)],
+        return Quaternion([np.cos(theta / 2), 0, 0, np.sin(theta / 2)],
                           True)
 
 

@@ -22,7 +22,7 @@ class Sphere(object):
         self.z = 10 * np.outer(np.ones(np.size(u)), np.cos(v))
 
     def draw(self, axes: Axes3D):
-        R = (self.orientation * (self.orientation_origin.inverse())).to_rot_matrix()
+        R = (self.orientation * (self.orientation_origin.get_inverse())).to_rot_matrix()
 
         xx = R[0, 0] * self.x + R[0, 1] * self.y + R[0, 2] * self.z
         yy = R[1, 0] * self.x + R[1, 1] * self.y + R[1, 2] * self.z

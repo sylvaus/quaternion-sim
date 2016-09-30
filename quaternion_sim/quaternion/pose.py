@@ -20,7 +20,7 @@ class Pose(object):
         self.orientation = orientation * self.orientation
 
     def inverse(self) -> 'Pose':
-        return Pose(self.orientation.inverse(),-1*self.position)
+        return Pose(self.orientation.get_inverse(), -1 * self.position)
 
     def is_equal(self, pose: 'Pose') -> bool:
         """
@@ -45,5 +45,5 @@ class Pose(object):
                     self.position + pose.position)
 
     def __sub__(self, pose):
-        return Pose(self.orientation * pose.orientation.inverse(),
+        return Pose(self.orientation * pose.orientation.get_inverse(),
                     self.position + pose.position)

@@ -2,21 +2,22 @@ import unittest
 
 from frames import Frame, FrameManager
 from quaternion.quaternion import Quaternion, quaternion_axis_theta, quaternion_x, \
-                                  quaternion_z
+    quaternion_z
 from quaternion.pose import Pose
 from numpy import array, allclose
 from solids import Solid
 
+
 class TestFrame(unittest.TestCase):
     def test_translate_frame(self):
         frame = Frame("", Pose(), "")
-        frame.translate(array([1,2,3]))
+        frame.translate(array([1, 2, 3]))
 
-        self.assertTrue(allclose(frame.pose.position, array([1, 2, 3]).reshape(3,1)))
+        self.assertTrue(allclose(frame.pose.position, array([1, 2, 3]).reshape(3, 1)))
 
         frame.translate(array([1, 2, 3]))
 
-        self.assertTrue(allclose(frame.pose.position, array([2, 4, 6]).reshape(3,1)))
+        self.assertTrue(allclose(frame.pose.position, array([2, 4, 6]).reshape(3, 1)))
 
     def test_frame_rotate(self):
         frame = Frame("", Pose(), "")
@@ -37,9 +38,7 @@ class TestFrame(unittest.TestCase):
         self.assertTrue(allclose(frame.pose.orientation.array,
                                  quat_f.array))
 
-
     def test_get_frame_seq(self):
-
         fixed_frame = Frame("fixed", Pose(), "")
         frame_1 = Frame("frame_1", Pose(), "fixed")
         frame_2 = Frame("frame_2", Pose(), "frame_1")
@@ -59,21 +58,20 @@ class TestFrame(unittest.TestCase):
         res2 = ["frame_4", "fixed"]
         self.assertTrue([res1, res2] == frame_mgr.get_frame_seq(frame_4, frame_2))
 
-
     def test_solid_pose_in_frame(self):
-        vec_x = array([1,0,0])
-        vec_y = array([0,1,0])
-        vec_z = array([0,0,1])
-        vec_null = array([0,0,0])
+        vec_x = array([1, 0, 0])
+        vec_y = array([0, 1, 0])
+        vec_z = array([0, 0, 1])
+        vec_null = array([0, 0, 0])
 
         quat_x = quaternion_x(90, False)
         quat_z = quaternion_z(90, False)
         quat_null = Quaternion()
 
         fixed_frame = Frame("fixed", Pose(), "")
-        frame_1 = Frame("frame_1", Pose(quat_x,vec_z), "fixed")
-        frame_2 = Frame("frame_2", Pose(quat_x,vec_z), "frame_1")
-        frame_3 = Frame("frame_3", Pose(quat_x,vec_z), "frame_2")
+        frame_1 = Frame("frame_1", Pose(quat_x, vec_z), "fixed")
+        frame_2 = Frame("frame_2", Pose(quat_x, vec_z), "frame_1")
+        frame_3 = Frame("frame_3", Pose(quat_x, vec_z), "frame_2")
         frame_4 = Frame("frame_4", Pose(quat_null, vec_x), "fixed")
         frame_5 = Frame("frame_5", Pose(quat_z, vec_y), "frame_4")
 
@@ -84,25 +82,23 @@ class TestFrame(unittest.TestCase):
         frame_mgr.add_frame(frame_4)
         frame_mgr.add_frame(frame_5)
 
-        solid = Solid(pose=Pose(quat_x,vec_z), frame=frame_3)
-
+        solid = Solid(pose=Pose(), frame=frame_2)
         pose = frame_mgr.solid_pose_in_frame(solid, fixed_frame)
+        res = Pose(quaternion_x(180, False), array([0, -1, 1]))
+        self.assertTrue(res.is_equal(pose), [res, pose])
 
-        self.assertTrue(Pose().is_equal(pose))
+        solid = Solid(pose=Pose(quat_x, vec_z), frame=frame_3)
+        pose = frame_mgr.solid_pose_in_frame(solid, fixed_frame)
+        res = Pose()
+        self.assertTrue(Pose().is_equal(pose), [res, pose])
 
-        res = Pose(Quaternion(), array([-1,0,0]))
+        res = Pose(Quaternion(), array([-1, 0, 0]))
         pose = frame_mgr.solid_pose_in_frame(solid, frame_4)
+        self.assertTrue(res.is_equal(pose), [res, pose])
 
-        self.assertTrue(res.is_equal(pose), pose)
-
-        res = Pose(quaternion_z(-90, False), array([-1,1,0]))
+        res = Pose(quaternion_z(-90, False), array([-1, 1, 0]))
         pose = frame_mgr.solid_pose_in_frame(solid, frame_5)
-
-        print(pose)
-        print(res)
-
-        self.assertTrue(res.is_equal(pose))
-
+        self.assertTrue(res.is_equal(pose), [res, pose])
 
 
 if __name__ == '__main__':

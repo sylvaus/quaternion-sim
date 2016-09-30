@@ -1,7 +1,9 @@
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+import numpy as np
 
 from quaternion.vector_utils import *
+from quaternion.quaternion import Quaternion
 
 
 class Parallelepiped(object):
@@ -33,7 +35,7 @@ class Parallelepiped(object):
         self.orientation_origin = Quaternion()
 
     def draw(self, axes: Axes3D):
-        R = (self.orientation * (self.orientation_origin.inverse())).to_rot_matrix()
+        R = (self.orientation * (self.orientation_origin.get_inverse())).to_rot_matrix()
         verts = [vectorize(np.dot(R, v)) for v in self.vertices]
 
         for plane in self.planes:

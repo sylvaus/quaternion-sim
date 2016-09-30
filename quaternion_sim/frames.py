@@ -20,6 +20,7 @@ class FrameManager(object):
         """
         The FrameManager is managing all the frames and allows to
         quickly express a pose in any frame.
+        It has to be initialized by the inertial fixed frame
         """
 
         self.frames = {fixed_frame.name: fixed_frame}
@@ -68,12 +69,11 @@ class FrameManager(object):
             pose_fixed.position = frame.pose.position + \
                                   frame.pose.orientation.to_rot_matrix()*pose_fixed.position
 
+        pose_fixed = pose_fixed.inverse()
 
-        print(pose_fixed)
-        print(pose)
-        pose.rotate(pose_fixed.orientation.inverse())
+        pose.rotate(pose_fixed.orientation)
         pose.position = pose_fixed.orientation.to_rot_matrix() * \
-                        (pose.position - pose_fixed.position)
+                        (pose.position + pose_fixed.position)
 
         return pose
 
@@ -109,3 +109,6 @@ class FrameManager(object):
                 bwd_frame_seq.append(self.frames[bwd_frame_seq[-1]].ref_frame)
 
         return [fwd_frame_seq, bwd_frame_seq]
+
+    def get_all_frame_poses(self) -> dict:
+        poses = {}

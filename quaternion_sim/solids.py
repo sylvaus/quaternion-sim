@@ -19,7 +19,7 @@ class Solid(object):
     def __init__(self,
                  pose: Pose = Pose(),
                  init_pose: Pose = Pose(),
-                 frame: Frame = Frame("fixed", Pose(), None),
+                 frame: Frame = Frame("fixed", Pose(), ""),
                  mass: float = 1.0,
                  inertia: matrix = identity(3),
                  ambient_color: list = [0.0, 0.0, 0.0, 0],
@@ -93,9 +93,10 @@ class Solid(object):
     def get_inertia(self) -> matrix:
         return self.inertia
 
-    def opgl_move_to_pose(self):
-        # Reset init view
-        glLoadIdentity()
+    def opgl_move_to_pose(self, from_fixed_frame:bool=True):
+        if from_fixed_frame:
+            # Reset init view
+            glLoadIdentity()
 
         # Translate to the right position
         glTranslatef(self.pose.position[0],
@@ -115,14 +116,18 @@ class Solid(object):
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, [1, 1, 1, 0.0])
         glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20)
 
+    def draw(self, from_fixed_frame:bool=True):
+        self.opgl_move_to_pose(from_fixed_frame)
+        self.apply_material()
+
 
 class Sphere(Solid):
     def __init__(self, radius: int = 1, *args):
         Solid.__init__(self, *args)
         self.radius = radius
 
-    def draw(self):
-        self.opgl_move_to_pose()
+    def draw(self, from_fixed_frame: bool=True):
+        self.opgl_move_to_pose(from_fixed_frame)
         self.apply_material()
 
         # draw sphere
@@ -144,8 +149,8 @@ class Parallepiped(Solid):
         self.width = width
         self.height = height
 
-    def draw(self):
-        self.opgl_move_to_pose()
+    def draw(self, from_fixed_frame:bool=True):
+        self.opgl_move_to_pose(from_fixed_frame)
         self.apply_material()
 
         # draw parallelepiped

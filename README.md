@@ -1,7 +1,7 @@
 # quaternion-sim
 ### Quick Description
 A little project to show one use of quaternion ,different ways to model 
-a ball on a plate and teach a bit if control theory
+a ball on a plate and teach a bit of control theory
 
 ### Getting Started
 Clone this repository
