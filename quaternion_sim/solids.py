@@ -12,7 +12,7 @@ from frames import Frame
 
 import copy as cp
 
-rad_to_deg = 180/pi
+rad_to_deg = 180 / pi
 
 
 class Solid(object):
@@ -93,7 +93,7 @@ class Solid(object):
     def get_inertia(self) -> matrix:
         return self.inertia
 
-    def opgl_move_to_pose(self, from_fixed_frame:bool=True):
+    def opgl_move_to_pose(self, from_fixed_frame: bool = True):
         if from_fixed_frame:
             # Reset init view
             glLoadIdentity()
@@ -116,7 +116,7 @@ class Solid(object):
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, [1, 1, 1, 0.0])
         glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20)
 
-    def draw(self, from_fixed_frame:bool=True):
+    def draw(self, from_fixed_frame: bool = True):
         self.opgl_move_to_pose(from_fixed_frame)
         self.apply_material()
 
@@ -126,7 +126,7 @@ class Sphere(Solid):
         Solid.__init__(self, *args)
         self.radius = radius
 
-    def draw(self, from_fixed_frame: bool=True):
+    def draw(self, from_fixed_frame: bool = True):
         self.opgl_move_to_pose(from_fixed_frame)
         self.apply_material()
 
@@ -149,7 +149,7 @@ class Parallepiped(Solid):
         self.width = width
         self.height = height
 
-    def draw(self, from_fixed_frame:bool=True):
+    def draw(self, from_fixed_frame: bool = True):
         self.opgl_move_to_pose(from_fixed_frame)
         self.apply_material()
 

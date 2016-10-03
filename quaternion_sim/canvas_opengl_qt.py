@@ -4,6 +4,7 @@ from OpenGL.GLUT import *
 from PyQt4.QtOpenGL import *
 from quaternion.pose import Pose
 from solids import Solid
+from frames import FrameManager
 
 
 class glWidget(QGLWidget):
@@ -14,11 +15,15 @@ class glWidget(QGLWidget):
                  ambient_light_color: list = [1.0, 1.0, 1.0, 0],
                  diffuse_light_color: list = [1.0, 1.0, 1.0, 0],
                  diffuse_light_position: list = [10.0, 10.0, 10.0, 0.0],
-                 objects: list = []
+                 solids: list = [],
+                 frame_mgr: FrameManager = None
                  ):
         QGLWidget.__init__(self, parent)
         self.setMinimumSize(640, 480)
-        self.objects = objects
+
+        self.solids = solids
+
+        self.frame_mgr = frame_mgr
 
         # Camera pose
         self.camera_pose = camera_pose
@@ -34,8 +39,17 @@ class glWidget(QGLWidget):
     def paintGL(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        for object in self.objects:
-            object.draw()
+        if self.frame_mgr is None:
+            for solid in self.solids:
+                solid.draw()
+
+        else:
+            frame_poses = self.frame_mgr.get_all_frame_poses()
+
+            for solid in self.solids:
+                self.move_to_pose(frame_poses[solid.frame.name])
+
+                solid.draw()
 
         glutSwapBuffers()
 
@@ -54,16 +68,9 @@ class glWidget(QGLWidget):
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH)
 
         glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
         gluPerspective(45.0, 1.33, 0.1, 100.0)
-        glTranslatef(self.camera_pose.position[0],
-                     self.camera_pose.position[1],
-                     self.camera_pose.position[2])
 
-        glRotatef(self.camera_pose.orientation.get_theta(rad=False),
-                  self.camera_pose.orientation[1],
-                  self.camera_pose.orientation[2],
-                  self.camera_pose.orientation[3])
+        self.move_to_pose(self.camera_pose)
 
         glMatrixMode(GL_MODELVIEW)
 
@@ -90,4 +97,15 @@ class glWidget(QGLWidget):
         glEnable(GL_LIGHT1)
 
     def add_solid(self, solid: Solid):
-        self.objects.append(solid)
+        self.solids.append(solid)
+
+    def move_to_pose(self, pose: Pose):
+        glLoadIdentity()
+        glTranslatef(pose.position[0],
+                     pose.position[1],
+                     pose.position[2])
+
+        glRotatef(pose.orientation.get_theta(rad=False),
+                  pose.orientation[1],
+                  pose.orientation[2],
+                  pose.orientation[3])

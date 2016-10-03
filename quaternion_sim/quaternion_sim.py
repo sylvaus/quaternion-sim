@@ -4,6 +4,7 @@ from quaternion.pose import Pose
 from solids import Sphere, Parallepiped
 from mainwindow import MainWindow
 from PyQt4 import QtGui, QtCore
+from numpy import array
 
 
 class Simulation(object):
@@ -15,10 +16,10 @@ class Simulation(object):
 
         self.window = MainWindow()
 
-        self.window.set_camera_pose(Pose(quat.quat_x(-45, False),
-                                         [0, 0, -30.0]))
-        self.window.add_object(self.ball)
-        self.window.add_object(self.plate)
+        self.window.set_camera_pose(Pose(quat.quaternion_x(-45, False),
+                                         array([0, 0, -30.0])))
+        self.window.add_solid(self.ball)
+        self.window.add_solid(self.plate)
         self.window.set_cyclic_call(self.update_object_poses)
 
     def start_simulation(self):

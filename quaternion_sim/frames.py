@@ -2,6 +2,7 @@ from quaternion.pose import Pose
 from quaternion.pose import Quaternion
 from numpy import array
 
+
 class Frame(object):
     def __init__(self, name: str, pose: Pose, ref_frame: str) -> None:
         self.name = name
@@ -24,6 +25,8 @@ class FrameManager(object):
         """
 
         self.frames = {fixed_frame.name: fixed_frame}
+        self.depth_frame_dict = {0: [fixed_frame.name]}
+        self.frame_depth_dict = {fixed_frame.name: 0}
         self.fixed_frame = fixed_frame
 
     def add_frame(self, frame: Frame) -> None:
@@ -34,9 +37,18 @@ class FrameManager(object):
 
         if frame.ref_frame in self.frames:
             if frame.name in self.frames:
-                raise Exception("The reference frame \"{0}\" already exist".format(frame.ref_frame))
+                raise Exception("The frame \"{0}\" already exists".format(frame.ref_frame))
             else:
                 self.frames[frame.name] = frame
+
+                depth = 1 + self.frame_depth_dict[frame.ref_frame]
+
+                self.frame_depth_dict[frame.name] = depth
+
+                if depth in self.depth_frame_dict:
+                    self.depth_frame_dict[depth].append(frame.name)
+                else:
+                    self.depth_frame_dict[depth] = [frame.name]
         else:
             raise Exception("The reference frame \"{0}\" does not exist".format(frame.ref_frame))
 
@@ -55,19 +67,19 @@ class FrameManager(object):
 
             pose.rotate(frame.pose.orientation)
             pose.position = frame.pose.position + \
-                            frame.pose.orientation.to_rot_matrix()*pose.position
+                            frame.pose.orientation.to_rot_matrix() * pose.position
 
         if len(frame_seqs[1]) == 1:
             return pose
 
-        pose_fixed = Pose(Quaternion(), array([0,0,0]))
+        pose_fixed = Pose(Quaternion(), array([0, 0, 0]))
 
         for frame_name in frame_seqs[1]:
             frame = self.frames[frame_name]
 
             pose_fixed.rotate(frame.pose.orientation)
             pose_fixed.position = frame.pose.position + \
-                                  frame.pose.orientation.to_rot_matrix()*pose_fixed.position
+                                  frame.pose.orientation.to_rot_matrix() * pose_fixed.position
 
         pose_fixed = pose_fixed.inverse()
 
@@ -76,7 +88,6 @@ class FrameManager(object):
                         (pose.position + pose_fixed.position)
 
         return pose
-
 
     def get_frame_seq(self, from_frame: Frame, to_frame: Frame) -> list:
         """
@@ -98,12 +109,12 @@ class FrameManager(object):
         bwd_frame_seq = [from_frame.name]
 
         while fwd_frame_seq[-1] != self.fixed_frame.name and \
-              fwd_frame_seq[-1] != from_frame.name:
+                        fwd_frame_seq[-1] != from_frame.name:
             fwd_frame_seq.append(self.frames[fwd_frame_seq[-1]].ref_frame)
 
         # The to_frame is not part of the frame_seq
         if self.fixed_frame != from_frame.name and \
-           fwd_frame_seq[-1] == self.fixed_frame.name:
+                        fwd_frame_seq[-1] == self.fixed_frame.name:
 
             while bwd_frame_seq[-1] != self.fixed_frame.name:
                 bwd_frame_seq.append(self.frames[bwd_frame_seq[-1]].ref_frame)
@@ -111,4 +122,6 @@ class FrameManager(object):
         return [fwd_frame_seq, bwd_frame_seq]
 
     def get_all_frame_poses(self) -> dict:
-        poses = {}
+        poses = {self.fixed_frame.name: self.fixed_frame.pose}
+
+        # TODO Finish implementation of get_all_frame_poses

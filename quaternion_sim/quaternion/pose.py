@@ -30,14 +30,14 @@ class Pose(object):
         represent the same rotation (identity)
         """
         if allclose(self.position, pose.position) and \
-            allclose(self.orientation.to_rot_matrix(),
-                     pose.orientation.to_rot_matrix()):
+                allclose(self.orientation.to_rot_matrix(),
+                         pose.orientation.to_rot_matrix()):
             return True
         else:
             return False
 
     def __repr__(self):
-        return "position: {0} \norientation: {1}".format(str(self.position.reshape(1,3)),
+        return "position: {0} \norientation: {1}".format(str(self.position.reshape(1, 3)),
                                                          str(self.orientation))
 
     def __add__(self, pose):

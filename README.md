@@ -1,6 +1,6 @@
 # quaternion-sim
 ### Quick Description
-A little project to show one use of quaternion ,different ways to model 
+A little project to show one use of quaternion, different ways to model 
 a ball on a plate and teach a bit of control theory
 
 ### Getting Started
@@ -12,14 +12,18 @@ Run quaternion-sim.py
 - Quaternion class (easy): Done
 - Pose class (easy): Done
 - Solid class (easy): Done
-- Frame class (medium): On going
-- Frame Manager (medium): On going
-- the graphic side (medium): Expected soon
+- Frame class (medium): Done
+- Frame Manager (medium): On going (60%)
+- the graphic side (medium): On going (30%)
     - Solids (ball and plate): Done
     - Axes: On going (require Frame class)
 - Ball plate dynamics equation: Not started 
-- Tests: Just started
-
+- Tests: On going
+    - frames (70%)
+    - quaternion (0%)
+    - pose (0%)
+    - solids (0%)
+    
 
 ### Requirements
 - Python 3.5

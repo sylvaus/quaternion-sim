@@ -1,5 +1,6 @@
 import numpy as np
 from quaternion import rotation_matrix as rotm
+from time import time
 
 rad_to_deg = 180.0 / np.pi
 
@@ -24,10 +25,6 @@ class Quaternion(object):
         else:
             raise ValueError("Cannot make a quaternion from the given type")
 
-        self.rot_quaternion = rot_quaternion
-        if self.rot_quaternion:
-            self.check_rot_quat()
-
     def normalize(self) -> None:
         assert not (np.allclose(self.array, np.array([0, 0, 0, 0], dtype=float))) \
             , "Cannot normalize [0,0,0,0] quaternion"
@@ -42,8 +39,7 @@ class Quaternion(object):
     def get_inverse(self) -> 'Quaternion':
         q0 = np.array(self.array[0])
         qv = -self.array[1:4]
-        return Quaternion(np.insert(qv, 0, q0),
-                          self.rot_quaternion)
+        return Quaternion(np.insert(qv, 0, q0))
 
     def get_log(self) -> 'Quaternion':
         return quaternion_log(self)
@@ -58,14 +54,13 @@ class Quaternion(object):
             return 2.0 * np.arctan2(np.linalg.norm(self.array[1:4]), self.array[0]) * rad_to_deg
 
     def to_rot_matrix(self) -> np.matrix:
+        t = time()
         if np.linalg.norm(self.array[1:4]) == 0:
             return np.matrix(np.identity(3))
         else:
-            return rotm.RMatrix(self.get_axis(), self.get_theta())
-
-    def check_rot_quat(self):
-        if self.array[0] < 0:
-            self.array = -self.array
+            res = rotm.RMatrix(self.get_axis(), self.get_theta(), self)
+            print(time() - t)
+            return res
 
     def __repr__(self):
         return str(self.array)
@@ -86,8 +81,7 @@ class Quaternion(object):
         q0 = np.array(self.array[0] * other.array[0] - np.dot(self.array[1:4], other.array[1:4]))
         qv = self.array[0] * other.array[1:4] + other.array[0] * self.array[1:4] + \
              np.cross(self.array[1:4], other.array[1:4])
-        return Quaternion(np.insert(qv, 0, q0),
-                          self.rot_quaternion)
+        return Quaternion(np.insert(qv, 0, q0))
 
 
 def quaternion_log(quat: Quaternion) -> Quaternion:
@@ -96,32 +90,26 @@ def quaternion_log(quat: Quaternion) -> Quaternion:
 
 def quaternion_x(theta: float, rad: bool = True) -> Quaternion:
     if rad:
-        return Quaternion([np.cos(theta / 2), np.sin(theta / 2), 0, 0],
-                          True)
+        return Quaternion([np.cos(theta / 2), np.sin(theta / 2), 0, 0])
     else:
         theta = theta / rad_to_deg
-        return Quaternion([np.cos(theta / 2), np.sin(theta / 2), 0, 0],
-                          True)
+        return Quaternion([np.cos(theta / 2), np.sin(theta / 2), 0, 0])
 
 
 def quaternion_y(theta: float, rad: bool = True) -> Quaternion:
     if rad:
-        return Quaternion([np.cos(theta / 2), 0, np.sin(theta / 2), 0],
-                          True)
+        return Quaternion([np.cos(theta / 2), 0, np.sin(theta / 2), 0])
     else:
         theta = theta / rad_to_deg
-        return Quaternion([np.cos(theta / 2), 0, np.sin(theta / 2), 0],
-                          True)
+        return Quaternion([np.cos(theta / 2), 0, np.sin(theta / 2), 0])
 
 
 def quaternion_z(theta: float, rad: bool = True) -> Quaternion:
     if rad:
-        return Quaternion([np.cos(theta / 2), 0, 0, np.sin(theta / 2)],
-                          True)
+        return Quaternion([np.cos(theta / 2), 0, 0, np.sin(theta / 2)])
     else:
         theta = theta / rad_to_deg
-        return Quaternion([np.cos(theta / 2), 0, 0, np.sin(theta / 2)],
-                          True)
+        return Quaternion([np.cos(theta / 2), 0, 0, np.sin(theta / 2)])
 
 
 def quaternion_axis_theta(axis: np.ndarray, theta: float, rad: bool = True) -> Quaternion:
@@ -135,8 +123,7 @@ def quaternion_axis_theta(axis: np.ndarray, theta: float, rad: bool = True) -> Q
     if not rad:
         theta = theta / rad_to_deg
 
-    return Quaternion(np.insert(axis * np.sin(theta / 2.0), 0, np.cos(theta / 2.0)),
-                      True)
+    return Quaternion(np.insert(axis * np.sin(theta / 2.0), 0, np.cos(theta / 2.0)))
 
 
 def quaternion_2_vectors(v1: np.ndarray, v2: np.ndarray) -> Quaternion:

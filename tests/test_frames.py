@@ -82,6 +82,16 @@ class TestFrame(unittest.TestCase):
         frame_mgr.add_frame(frame_4)
         frame_mgr.add_frame(frame_5)
 
+        solid = Solid(pose=Pose(), frame=frame_1)
+        pose = frame_mgr.solid_pose_in_frame(solid, fixed_frame)
+        res = Pose(quaternion_x(90, False), array([0, 0, 1]))
+        self.assertTrue(res.is_equal(pose), [res, pose])
+
+        solid = Solid(pose=Pose(), frame=frame_1)
+        pose = frame_mgr.solid_pose_in_frame(solid, fixed_frame)
+        res = Pose(quaternion_x(-270, False), array([0, 0, 1]))
+        self.assertTrue(res.is_equal(pose), [res, pose])
+
         solid = Solid(pose=Pose(), frame=frame_2)
         pose = frame_mgr.solid_pose_in_frame(solid, fixed_frame)
         res = Pose(quaternion_x(180, False), array([0, -1, 1]))
@@ -99,6 +109,7 @@ class TestFrame(unittest.TestCase):
         res = Pose(quaternion_z(-90, False), array([-1, 1, 0]))
         pose = frame_mgr.solid_pose_in_frame(solid, frame_5)
         self.assertTrue(res.is_equal(pose), [res, pose])
+
 
 
 if __name__ == '__main__':

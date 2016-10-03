@@ -1,8 +1,8 @@
+import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-import numpy as np
 
-from quaternion.vector_utils import *
+from quaternion.matrix_vector_utils import vectorize
 from quaternion.quaternion import Quaternion
 
 
