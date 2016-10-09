@@ -1,3 +1,4 @@
+# TODO add a function (add_axis)
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 from canvas_opengl_qt import glWidget

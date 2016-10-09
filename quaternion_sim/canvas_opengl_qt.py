@@ -1,3 +1,5 @@
+# TODO clean imports, add a function (add_axis) and the related draw part
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -68,7 +70,6 @@ class glWidget(QGLWidget):
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH)
 
         glMatrixMode(GL_PROJECTION)
-        gluPerspective(45.0, 1.33, 0.1, 100.0)
 
         self.move_to_pose(self.camera_pose)
 
@@ -101,6 +102,7 @@ class glWidget(QGLWidget):
 
     def move_to_pose(self, pose: Pose):
         glLoadIdentity()
+        gluPerspective(45.0, 1.33, 0.1, 100.0)
         glTranslatef(pose.position[0],
                      pose.position[1],
                      pose.position[2])

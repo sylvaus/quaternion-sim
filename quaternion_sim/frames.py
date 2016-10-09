@@ -4,7 +4,7 @@ from numpy import array
 
 
 class Frame(object):
-    def __init__(self, name: str, pose: Pose, ref_frame: str) -> None:
+    def __init__(self, name: str, pose: Pose, ref_frame: str="") -> None:
         self.name = name
         self.pose = pose
         self.ref_frame = ref_frame

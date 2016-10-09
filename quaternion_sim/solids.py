@@ -1,6 +1,9 @@
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
+from OpenGL.GL import glLoadIdentity, glTranslatef, glRotatef, glMaterialfv, \
+                        glMaterialf, GL_FRONT_AND_BACK, GL_AMBIENT, GL_DIFFUSE, \
+                        GL_SPECULAR, GL_SHININESS, glScalef
+from OpenGL.GLU import gluNewQuadric, gluQuadricDrawStyle, gluQuadricTexture, \
+                        gluQuadricNormals, gluSphere, GLU_FILL, GLU_SMOOTH
+from OpenGL.GLUT import glutSolidCube
 
 from numpy import matrix, ndarray, pi
 from numpy.core.numeric import identity
