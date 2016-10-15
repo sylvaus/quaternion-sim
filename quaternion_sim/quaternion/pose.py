@@ -22,7 +22,7 @@ class Pose(object):
     def inverse(self) -> 'Pose':
         return Pose(self.orientation.get_inverse(), -1 * self.position)
 
-    def is_equal(self, pose: 'Pose') -> bool:
+    def is_equal(self, pose: 'Pose') -> 'Pose':
         """
         return True if the two poses are equal
         The rotation matrices are compared for the quaternion  due to
@@ -31,7 +31,7 @@ class Pose(object):
         """
         if allclose(self.position, pose.position) and \
                 allclose(self.orientation.to_rot_matrix(),
-                         pose.orientation.to_rot_matrix()):
+                         pose.orientation.to_rot_matrix(), 10**(-10), 10**(-10)):
             return True
         else:
             return False

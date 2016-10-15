@@ -1,4 +1,3 @@
-# TODO set the right ratio for the arrow and the right colors
 from OpenGL.GL import glLoadIdentity, glTranslatef, glRotatef, glMaterialfv, \
                         glMaterialf, GL_FRONT_AND_BACK, GL_AMBIENT, GL_DIFFUSE, \
                         GL_SPECULAR, GL_SHININESS
@@ -14,9 +13,9 @@ class Axis(object):
 
         self.frame = frame
         self.size = size
-        self.colors = [[0.0, 0.0, 0.0, 0],
-                       [0.0, 0.0, 0.0, 0],
-                       [0.0, 0.0, 0.0, 0]]
+        self.colors = [[1.0, 0.0, 0.0, 0],
+                       [0.0, 1.0, 0.0, 0],
+                       [0.0, 0.0, 1.0, 0]]
 
         self.rots = [quaternion_x(-90, False),
                      quaternion_y(90, False),
@@ -44,35 +43,34 @@ class Axis(object):
 
         # Set material
         glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color)
-        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color)
-        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, [1, 1, 1, 0.0])
-        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20)
+        #glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color)
+        #glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, [1, 1, 1, 0.0])
+        #glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20)
 
         # Draw cylinder
         quad = gluNewQuadric()
         gluQuadricDrawStyle(quad, GLU_FILL)
         gluQuadricTexture(quad, True)
         gluQuadricNormals(quad, GLU_SMOOTH)
-        gluCylinder(quad, self.size / 10, self.size / 10,
-                    self.size, 20, 20)
+        gluCylinder(quad, self.size / 30, self.size / 30,
+                    self.size * 0.8, 20, 20)
 
         # Move to the arrowhead position
-        glTranslatef(0, 0, self.size)
+        glTranslatef(0, 0, self.size * 0.8)
 
         # Draw arrowhead
         gluQuadricDrawStyle(quad, GLU_FILL)
         gluQuadricTexture(quad, True)
         gluQuadricNormals(quad, GLU_SMOOTH)
-        gluCylinder(quad, self.size / 7, 0,
-                    self.size/3, 20, 20)
+        gluCylinder(quad, self.size / 15, 0,
+                    self.size * 0.2, 20, 20)
 
         # Revert to the original position
-        glTranslatef(0, 0, -self.size)
+        glTranslatef(0, 0, -self.size * 0.8)
 
-    def glRotateQ(self, quat: Quaternion):
+    @staticmethod
+    def glRotateQ(quat: Quaternion):
         glRotatef(quat.get_theta(rad=False),
                   quat[1],
                   quat[2],
                   quat[3])
-
-

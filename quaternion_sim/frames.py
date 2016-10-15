@@ -1,7 +1,7 @@
 from quaternion.pose import Pose
 from quaternion.pose import Quaternion
 from numpy import array
-
+from typing import List, Dict
 
 class Frame(object):
     def __init__(self, name: str, pose: Pose, ref_frame: str="") -> None:
@@ -28,6 +28,7 @@ class FrameManager(object):
         self.depth_frame_dict = {0: [fixed_frame.name]}
         self.frame_depth_dict = {fixed_frame.name: 0}
         self.fixed_frame = fixed_frame
+        self.max_depth = 1
 
     def add_frame(self, frame: Frame) -> None:
         """
@@ -49,6 +50,7 @@ class FrameManager(object):
                     self.depth_frame_dict[depth].append(frame.name)
                 else:
                     self.depth_frame_dict[depth] = [frame.name]
+                    self.max_depth += 1
         else:
             raise Exception("The reference frame \"{0}\" does not exist".format(frame.ref_frame))
 
@@ -89,7 +91,7 @@ class FrameManager(object):
 
         return pose
 
-    def get_frame_seq(self, from_frame: Frame, to_frame: Frame) -> list:
+    def get_frame_seq(self, from_frame: Frame, to_frame: Frame) -> List[Pose]:
         """
         get_frame_seq returns a two lists containing:
             - the forward frame sequence which goes from:
@@ -121,7 +123,21 @@ class FrameManager(object):
 
         return [fwd_frame_seq, bwd_frame_seq]
 
-    def get_all_frame_poses(self) -> dict:
+    def get_all_frame_poses(self) -> Dict[str, Pose]:
         poses = {self.fixed_frame.name: self.fixed_frame.pose}
 
-        # TODO Finish implementation of get_all_frame_poses
+        for depth in range(1, self.max_depth):
+            for frame_name in self.depth_frame_dict[depth]:
+                pose = Pose()
+                frame = self.frames[frame_name]
+                pose_ref_frame = poses[frame.ref_frame]
+
+                pose.orientation = pose_ref_frame.orientation * \
+                                    frame.pose.orientation
+                pose.position = pose_ref_frame.position + \
+                                 pose_ref_frame.orientation.to_rot_matrix() * \
+                                 frame.pose.position
+
+                poses[frame_name] = pose
+
+        return poses

@@ -6,7 +6,7 @@ from OpenGL.GLUT import *
 from PyQt4.QtOpenGL import *
 from quaternion.pose import Pose
 from solids import Solid
-from frames import FrameManager
+from frames import FrameManager, Frame
 
 
 class glWidget(QGLWidget):
@@ -18,12 +18,14 @@ class glWidget(QGLWidget):
                  diffuse_light_color: list = [1.0, 1.0, 1.0, 0],
                  diffuse_light_position: list = [10.0, 10.0, 10.0, 0.0],
                  solids: list = [],
+                 frames: list = [],
                  frame_mgr: FrameManager = None
                  ):
         QGLWidget.__init__(self, parent)
         self.setMinimumSize(640, 480)
 
         self.solids = solids
+        self.frames = frames
 
         self.frame_mgr = frame_mgr
 
@@ -44,6 +46,9 @@ class glWidget(QGLWidget):
         if self.frame_mgr is None:
             for solid in self.solids:
                 solid.draw()
+
+            for frame in self.frames:
+                frame.draw()
 
         else:
             frame_poses = self.frame_mgr.get_all_frame_poses()
@@ -97,7 +102,16 @@ class glWidget(QGLWidget):
         glLightfv(GL_LIGHT1, GL_AMBIENT, self.ambient_light_color)
         glEnable(GL_LIGHT1)
 
+    def add_frame(self, frame: Frame):
+        if not hasattr(frame, "draw"):
+            raise "The frame {0} does not have a draw function".format(frame.__str__())
+
+        self.frames.append(frame)
+
     def add_solid(self, solid: Solid):
+        if not hasattr(solid, "draw"):
+            raise "The solid {0} does not have a draw function".format(solid.__str__())
+
         self.solids.append(solid)
 
     def move_to_pose(self, pose: Pose):
