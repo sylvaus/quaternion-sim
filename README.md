@@ -13,13 +13,14 @@ Run quaternion-sim.py
 - Pose class (easy): Done
 - Solid class (easy): Done
 - Frame class (medium): Done
-- Frame Manager (medium): On going (60%)
-- the graphic side (medium): On going (30%)
+- Frame Manager (medium): Done
+- the graphic side (medium): On going (90%)
     - Solids (ball and plate): Done
-    - Axes: On going (require Frame class)
+    - Axes: Done
+    - Improving Classes
 - Ball plate dynamics equation: Not started 
 - Tests: On going
-    - frames (70%)
+    - frames (100%)
     - quaternion (0%)
     - pose (0%)
     - solids (0%)
