@@ -20,17 +20,29 @@ rad_to_deg = 180 / pi
 
 class Solid(object):
     def __init__(self,
+                 name: str,
                  pose: Pose = Pose(),
                  init_pose: Pose = Pose(),
-                 frame: Frame = Frame("fixed", Pose(), ""),
+                 ref_frame: str = None,
                  mass: float = 1.0,
                  inertia: matrix = identity(3),
                  ambient_color: list = [0.0, 0.0, 0.0, 0],
                  diffuse_color: list = [0.0, 0.0, 0.0, 0]):
 
+        self.name = name
         self.pose = pose
-        self.init_pose = init_pose
-        self.frame = frame
+        self.init_pose = cp.deepcopy(init_pose)
+
+        if ref_frame is None:
+            self.ref_frame = None
+            self.frame = None
+
+        else:
+            self.ref_frame = ref_frame
+            self.frame = Frame("frame_{0}".format(self.name),
+                               self.pose,
+                               self.ref_frame)
+
         self.mass = mass
         self.inertia = inertia
         self.ambient_color = ambient_color
@@ -38,6 +50,7 @@ class Solid(object):
 
     def set_pose(self, pose: Pose):
         self.pose = pose
+        self.frame.pose = pose
 
     def set_position(self, pos: ndarray):
         self.pose.position = pos
@@ -125,8 +138,8 @@ class Solid(object):
 
 
 class Sphere(Solid):
-    def __init__(self, radius: int = 1, *args):
-        Solid.__init__(self, *args)
+    def __init__(self, radius: int = 1, *args, **kwargs):
+        Solid.__init__(self, *args, **kwargs)
         self.radius = radius
 
     def draw(self, from_fixed_frame: bool = True):
@@ -146,8 +159,9 @@ class Parallepiped(Solid):
                  length: int = 1,
                  width: int = 1,
                  height: int = 1,
-                 *args):
-        Solid.__init__(self, *args)
+                 *args,
+                 **kwargs):
+        Solid.__init__(self, *args, **kwargs)
         self.length = length
         self.width = width
         self.height = height

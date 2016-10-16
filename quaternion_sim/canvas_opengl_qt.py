@@ -7,6 +7,7 @@ from PyQt4.QtOpenGL import *
 from quaternion.pose import Pose
 from solids import Solid
 from frames import FrameManager, Frame
+from axes import Axis
 
 
 class glWidget(QGLWidget):
@@ -18,14 +19,14 @@ class glWidget(QGLWidget):
                  diffuse_light_color: list = [1.0, 1.0, 1.0, 0],
                  diffuse_light_position: list = [10.0, 10.0, 10.0, 0.0],
                  solids: list = [],
-                 frames: list = [],
+                 axes: list = [],
                  frame_mgr: FrameManager = None
                  ):
         QGLWidget.__init__(self, parent)
         self.setMinimumSize(640, 480)
 
         self.solids = solids
-        self.frames = frames
+        self.axes = axes
 
         self.frame_mgr = frame_mgr
 
@@ -47,16 +48,19 @@ class glWidget(QGLWidget):
             for solid in self.solids:
                 solid.draw()
 
-            for frame in self.frames:
-                frame.draw()
+            for axis in self.axes:
+                axis.draw()
 
         else:
             frame_poses = self.frame_mgr.get_all_frame_poses()
 
             for solid in self.solids:
-                self.move_to_pose(frame_poses[solid.frame.name])
+                self.move_to_pose(frame_poses[solid.ref_frame])
+                solid.draw(False)
 
-                solid.draw()
+            for axis in self.axes:
+                self.move_to_pose(frame_poses[axis.frame.name])
+                axis.draw(False)
 
         glutSwapBuffers()
 
@@ -76,7 +80,9 @@ class glWidget(QGLWidget):
 
         glMatrixMode(GL_PROJECTION)
 
-        self.move_to_pose(self.camera_pose)
+        glLoadIdentity()
+        gluPerspective(45.0, 1.33, 0.1, 100.0)
+        self.move_to_pose(self.camera_pose, False)
 
         glMatrixMode(GL_MODELVIEW)
 
@@ -92,6 +98,9 @@ class glWidget(QGLWidget):
         self.diffuse_light_color = color
         self.diffuse_light_position = position
 
+    def set_frame_mgr(self, frame_mgr:FrameManager):
+        self.frame_mgr = frame_mgr
+
     def init_lights(self):
         glEnable(GL_LIGHTING)
 
@@ -102,11 +111,11 @@ class glWidget(QGLWidget):
         glLightfv(GL_LIGHT1, GL_AMBIENT, self.ambient_light_color)
         glEnable(GL_LIGHT1)
 
-    def add_frame(self, frame: Frame):
-        if not hasattr(frame, "draw"):
-            raise "The frame {0} does not have a draw function".format(frame.__str__())
+    def add_axis(self, axis: Axis):
+        if not hasattr(axis, "draw"):
+            raise "The frame {0} does not have a draw function".format(axis.__str__())
 
-        self.frames.append(frame)
+        self.axes.append(axis)
 
     def add_solid(self, solid: Solid):
         if not hasattr(solid, "draw"):
@@ -114,9 +123,10 @@ class glWidget(QGLWidget):
 
         self.solids.append(solid)
 
-    def move_to_pose(self, pose: Pose):
-        glLoadIdentity()
-        gluPerspective(45.0, 1.33, 0.1, 100.0)
+    def move_to_pose(self, pose: Pose, from_ref_frame:bool = True):
+        if from_ref_frame:
+            glLoadIdentity()
+
         glTranslatef(pose.position[0],
                      pose.position[1],
                      pose.position[2])

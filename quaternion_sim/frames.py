@@ -60,7 +60,8 @@ class FrameManager(object):
         pose of solid expressed in frame
         """
 
-        frame_seqs = self.get_frame_seq(frame, solid.frame)
+        frame_seqs = self.get_frame_seq(frame,
+                                        self.frames[solid.ref_frame])
 
         pose = solid.get_pose(True)
 

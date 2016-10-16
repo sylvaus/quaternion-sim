@@ -54,12 +54,10 @@ class Quaternion(object):
             return 2.0 * np.arctan2(np.linalg.norm(self.array[1:4]), self.array[0]) * rad_to_deg
 
     def to_rot_matrix(self) -> np.matrix:
-        t = time()
         if np.linalg.norm(self.array[1:4]) == 0:
             return np.matrix(np.identity(3))
         else:
-            res = rotm.RMatrix(self.get_axis(), self.get_theta(), self)
-            print(time() - t)
+            res = rotm.RMatrix_fast(self)
             return res
 
     def __repr__(self):

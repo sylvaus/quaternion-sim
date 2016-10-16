@@ -2,7 +2,7 @@ import sys
 import quaternion.quaternion as quat
 from quaternion.pose import Pose
 from solids import Sphere, Parallepiped
-from frames import Frame
+from frames import Frame, FrameManager
 from axes import Axis
 from mainwindow import MainWindow
 from PyQt4 import QtGui, QtCore
@@ -11,21 +11,33 @@ from numpy import array
 
 class Simulation(object):
     def __init__(self):
-        self.ball = Sphere()
-        self.plate = Parallepiped(10, 10, 1)
-        self.frame = Frame("f1", Pose())
-        self.axis = Axis(self.frame,10)
+        gray_color = [0.4, 0.4, 0.4, 0.0]
 
+        self.frame_ref = Frame("ref_frame", Pose())
+        self.plate = Parallepiped(10, 10, 1, name="plate", ref_frame="ref_frame")
+        self.ball = Sphere(name="ball",
+                           pose=Pose(position=array([2,-2,1.5])),
+                           ref_frame=self.plate.frame.name,
+                           ambient_color=gray_color,
+                           diffuse_color=gray_color)
+
+
+        self.frame_mgr = FrameManager(self.frame_ref)
+        self.frame_mgr.add_frame(self.plate.frame)
+        self.frame_mgr.add_frame(self.ball.frame)
+
+        self.axis = Axis(self.frame_ref,10)
 
         self.qt_app = QtGui.QApplication(sys.argv)
 
         self.window = MainWindow()
 
-        self.window.set_camera_pose(Pose(quat.quaternion_x(0, False),
+        self.window.set_camera_pose(Pose(quat.quaternion_x(-45, False),
                                          array([0, 0, -30.0])))
         self.window.add_solid(self.ball)
         self.window.add_solid(self.plate)
-        self.window.add_solid(self.axis)
+        self.window.add_axis(self.axis)
+        self.window.set_frame_mgr(self.frame_mgr)
         self.window.set_cyclic_call(self.update_object_poses)
 
     def start_simulation(self):

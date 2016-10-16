@@ -4,6 +4,7 @@ from PyQt4 import QtGui
 from canvas_opengl_qt import glWidget
 from quaternion.pose import Pose
 from solids import Solid
+from axes import Axis
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -36,6 +37,9 @@ class MainWindow(QtGui.QMainWindow):
     def add_solid(self, solid: Solid):
         self.graph_widget.add_solid(solid)
 
+    def add_axis(self, axis: Axis):
+        self.graph_widget.add_axis(axis)
+
     def keyPressEvent(self, event):
         # Memorize all key pressed
 
@@ -60,6 +64,9 @@ class MainWindow(QtGui.QMainWindow):
 
     def set_cyclic_call(self, func):
         self.user_cyclic_call = func
+
+    def set_frame_mgr(self, frame_mgr):
+        self.graph_widget.set_frame_mgr(frame_mgr)
 
     def get_pressed_keys(self, delete: bool = False):
         if delete:

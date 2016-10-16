@@ -51,7 +51,6 @@ def RMatrix_fast(quat: 'Quaternion') -> matrix:
     Return the rotation matrix corresponding to the quaternion
     without verifying that the axis norm is not zero
     """
-    q0q0 = quat[0] * quat[0]
     q1q0 = quat[1] * quat[0]
     q2q0 = quat[2] * quat[0]
     q3q0 = quat[3] * quat[0]
@@ -62,8 +61,6 @@ def RMatrix_fast(quat: 'Quaternion') -> matrix:
     q3q2 = quat[3] * quat[2]
     q3q3 = quat[3] * quat[3]
 
-    # TODO Finish implementation of RMatrix_fast (look at the formula on wiki)
-
-    # return matrix([[, , ],
-    #              [, , ]
-    #              [, , ]])
+    return matrix([[1 - 2 * (q2q2 + q3q3), 2 * (q2q1 - q3q0), 2 * (q3q1 + q2q0)],
+                  [2 * (q2q1 + q3q0), 1 - 2 * (q1q1 + q3q3), 2 * (q3q2 - q1q0)],
+                  [2 * (q3q1 - q2q0), 2 * (q3q2 + q1q0), 1 - 2 * (q1q1 + q2q2)]])

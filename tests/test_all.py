@@ -82,32 +82,32 @@ class TestFrame(unittest.TestCase):
         frame_mgr.add_frame(frame_4)
         frame_mgr.add_frame(frame_5)
 
-        solid = Solid(pose=Pose(), frame=frame_1)
-        pose = frame_mgr.solid_pose_in_frame(solid, fixed_frame)
+        solid_1 = Solid("solid_1", pose=Pose(), ref_frame="frame_1")
+        pose = frame_mgr.solid_pose_in_frame(solid_1, fixed_frame)
         res = Pose(quaternion_x(90, False), array([0, 0, 1]))
         self.assertTrue(res.is_equal(pose), [res, pose])
 
-        solid = Solid(pose=Pose(), frame=frame_1)
-        pose = frame_mgr.solid_pose_in_frame(solid, fixed_frame)
+        solid_2 = Solid("solid_2", pose=Pose(), ref_frame="frame_1")
+        pose = frame_mgr.solid_pose_in_frame(solid_2, fixed_frame)
         res = Pose(quaternion_x(-270, False), array([0, 0, 1]))
         self.assertTrue(res.is_equal(pose), [res, pose])
 
-        solid = Solid(pose=Pose(), frame=frame_2)
-        pose = frame_mgr.solid_pose_in_frame(solid, fixed_frame)
+        solid_3 = Solid("solid_3", pose=Pose(), ref_frame="frame_2")
+        pose = frame_mgr.solid_pose_in_frame(solid_3, fixed_frame)
         res = Pose(quaternion_x(180, False), array([0, -1, 1]))
         self.assertTrue(res.is_equal(pose), [res, pose])
 
-        solid = Solid(pose=Pose(quat_x, vec_z), frame=frame_3)
-        pose = frame_mgr.solid_pose_in_frame(solid, fixed_frame)
+        solid_4 = Solid("solid_4", pose=Pose(quat_x, vec_z), ref_frame="frame_3")
+        pose = frame_mgr.solid_pose_in_frame(solid_4, fixed_frame)
         res = Pose()
         self.assertTrue(Pose().is_equal(pose), [res, pose])
 
         res = Pose(Quaternion(), array([-1, 0, 0]))
-        pose = frame_mgr.solid_pose_in_frame(solid, frame_4)
+        pose = frame_mgr.solid_pose_in_frame(solid_4, frame_4)
         self.assertTrue(res.is_equal(pose), [res, pose])
 
         res = Pose(quaternion_z(-90, False), array([-1, 1, 0]))
-        pose = frame_mgr.solid_pose_in_frame(solid, frame_5)
+        pose = frame_mgr.solid_pose_in_frame(solid_4, frame_5)
         self.assertTrue(res.is_equal(pose), [res, pose])
 
     def test_get_all_frame_poses(self):
