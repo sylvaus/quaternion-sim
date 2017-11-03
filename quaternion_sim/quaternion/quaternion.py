@@ -69,17 +69,44 @@ class Quaternion(object):
     def __setitem__(self, key, value):
         self.array[key] = value
 
-    def __add__(self, other):
+    def __add__(self, other: "Quaternion"):
         return Quaternion(self.array + other.array)
 
-    def __sub__(self, other):
+    def __sub__(self, other: "Quaternion"):
         return Quaternion(self.array - other.array)
 
-    def __mul__(self, other):
+    def __mul__(self, other: "Quaternion"):
         q0 = np.array(self.array[0] * other.array[0] - np.dot(self.array[1:4], other.array[1:4]))
         qv = self.array[0] * other.array[1:4] + other.array[0] * self.array[1:4] + \
              np.cross(self.array[1:4], other.array[1:4])
         return Quaternion(np.insert(qv, 0, q0))
+
+    def dot(self, other: "Quaternion",
+            unit_quat: bool = False,
+            orient_quat: bool = False):
+
+        #TODO finish the implementation
+        """
+        If the param orient_quat is true then the calculation ensures that the result is a unit quaternion.
+        To do so, the term q0 is computed with the formula
+            q0 = sqrt(1 - q1^2 - q1^2 - q1^2 - q1^3)
+        However, this result is only true if
+        """
+        if orient_quat:
+            q0 = np.array(self.array[0] * other.array[0] - np.dot(self.array[1:4], other.array[1:4]))
+            qv = self.array[0] * other.array[1:4] + other.array[0] * self.array[1:4] + \
+                 np.cross(self.array[1:4], other.array[1:4])
+            return Quaternion(np.insert(qv, 0, q0))
+        elif unit_quat:
+            q0 = np.array(self.array[0] * other.array[0] - np.dot(self.array[1:4], other.array[1:4]))
+            qv = self.array[0] * other.array[1:4] + other.array[0] * self.array[1:4] + \
+                 np.cross(self.array[1:4], other.array[1:4])
+            return Quaternion(np.insert(qv, 0, q0))
+        else:
+            q0 = np.array(self.array[0] * other.array[0] - np.dot(self.array[1:4], other.array[1:4]))
+            qv = self.array[0] * other.array[1:4] + other.array[0] * self.array[1:4] + \
+                 np.cross(self.array[1:4], other.array[1:4])
+            return Quaternion(np.insert(qv, 0, q0))
 
 
 def quaternion_log(quat: Quaternion) -> Quaternion:

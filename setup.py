@@ -1,4 +1,8 @@
-from distutils.core import setup
+from distutils.core import setup, Extension
+
+
+quaternionC = Extension('demo',
+                    sources = ['quaternion_sim/quaternion.cpp'])
 
 def readme():
     with open('README.md') as f:
@@ -15,5 +19,6 @@ setup(
     description='',
     long_description=readme(),
     requires=['numpy', 'PyQt4', "OpenGL", "PyOpenGL_accelerate"],
-    install_requires=['numpy', "PyOpenGL", "PyOpenGL_accelerate"]
+    install_requires=['numpy', "PyOpenGL", "PyOpenGL_accelerate"],
+    ext_modules = [quaternionC]
 )

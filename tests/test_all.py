@@ -158,7 +158,7 @@ class TestFrame(unittest.TestCase):
 
 class TestQuaternion(unittest.TestCase):
     def test_XXX(self):
-        a=1
+        pass
 
 
 

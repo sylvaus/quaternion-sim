@@ -5,7 +5,7 @@ from OpenGL.GLU import gluNewQuadric, gluQuadricDrawStyle, gluQuadricTexture, \
                         gluQuadricNormals, gluSphere, GLU_FILL, GLU_SMOOTH
 from OpenGL.GLUT import glutSolidCube
 
-from numpy import matrix, ndarray, pi
+from numpy import matrix, ndarray, pi, array
 from numpy.core.numeric import identity
 
 from quaternion.quaternion import Quaternion
@@ -23,15 +23,21 @@ class Solid(object):
                  name: str,
                  pose: Pose = Pose(),
                  init_pose: Pose = Pose(),
+                 vel: ndarray = array([0.0, 0.0, 0.0]),
+                 ang_vel: ndarray = array([0.0, 0.0, 0.0]),
                  ref_frame: str = None,
                  mass: float = 1.0,
                  inertia: matrix = identity(3),
-                 ambient_color: list = [0.0, 0.0, 0.0, 0],
-                 diffuse_color: list = [0.0, 0.0, 0.0, 0]):
+                 ambient_color: list = None,
+                 diffuse_color: list = None):
 
         self.name = name
         self.pose = pose
+        # the init pose is deep copied to be sure it won't be modified involuntary
         self.init_pose = cp.deepcopy(init_pose)
+
+        self.vel = vel.astype(dtype=float).reshape(3, 1)
+        self.ang_vel = ang_vel.astype(dtype=float).reshape(3, 1)
 
         if ref_frame is None:
             self.ref_frame = None
@@ -45,39 +51,55 @@ class Solid(object):
 
         self.mass = mass
         self.inertia = inertia
-        self.ambient_color = ambient_color
-        self.diffuse_color = diffuse_color
 
-    def set_pose(self, pose: Pose):
+        if ambient_color is None:
+            self.ambient_color = [0.0, 0.0, 0.0, 0.0]
+        else:
+            self.ambient_color = ambient_color
+
+        if diffuse_color is None:
+            self.diffuse_color = [0.0, 0.0, 0.0, 0.0]
+        else:
+            self.diffuse_color = diffuse_color
+
+    def set_pose(self, pose: Pose) -> None:
         self.pose = pose
         self.frame.pose = pose
 
-    def set_position(self, pos: ndarray):
-        self.pose.position = pos
+    def set_position(self, pos: ndarray) -> None:
+        self.pose.position = pos.astype(dtype=float).reshape(3, 1)
 
-    def set_orientation(self, quat: Quaternion):
+    def set_orientation(self, quat: Quaternion) -> None:
         self.pose.orientation = quat
 
-    def set_init_pose(self, pose: Pose):
+    def set_init_pose(self, pose: Pose) -> None:
         self.init_pose = pose
 
-    def set_init_position(self, pos: ndarray):
+    def set_init_position(self, pos: ndarray) -> None:
         self.init_pose.position = pos
 
-    def set_init_orientation(self, quat: Quaternion):
+    def set_init_orientation(self, quat: Quaternion) -> None:
         self.init_pose.orientation = quat
 
-    def set_mass(self, mass: float):
+    def set_mass(self, mass: float) -> None:
         self.mass = mass
 
-    def set_inertia(self, inertia: matrix):
+    def set_inertia(self, inertia: matrix) -> None:
         self.inertia = inertia
 
-    def rotate(self, quat: Quaternion):
+    def rotate(self, quat: Quaternion) -> None:
         self.pose.rotate(quat)
 
-    def translate(self, delta_pos: ndarray):
+    def translate(self, delta_pos: ndarray) -> None:
         self.pose.translate(delta_pos)
+
+    def reset_pose(self) -> None:
+        self.set_pose(cp.deepcopy(self.init_pose))
+
+    def reset_vels(self) -> None:
+        self.vel = array([0, 0, 0]).astype(dtype=float).reshape(3, 1)
+        self.ang_vel = array([0, 0, 0]).astype(dtype=float).reshape(3, 1)
+
 
     def get_pose(self, dcopy=False) -> Pose:
         if dcopy:
