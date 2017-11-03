@@ -18,7 +18,8 @@ setup(
     author_email='',
     description='',
     long_description=readme(),
-    requires=['numpy', 'PyQt4', "OpenGL", "PyOpenGL_accelerate"],
+    requires=['numpy', 'PyQt4', "PyOpenGL_accelerate"],
     install_requires=['numpy', "PyOpenGL", "PyOpenGL_accelerate"],
+    python_requires='>=3',
     ext_modules = [quaternionC]
 )

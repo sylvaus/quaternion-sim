@@ -1,11 +1,12 @@
 import unittest
 
-from frames import Frame, FrameManager
-from quaternion.quaternion import Quaternion, quaternion_axis_theta, quaternion_x, \
-                                     quaternion_z
-from quaternion.pose import Pose
 from numpy import array, allclose
-from solids import Solid
+
+from quaternion_sim.frames import Frame, FrameManager
+from quaternion_sim.quaternion.quaternion import Quaternion, quaternion_axis_theta, quaternion_x, \
+                                     quaternion_z
+from quaternion_sim.quaternion.pose import Pose
+from quaternion_sim.solids import Solid
 
 
 class TestFrame(unittest.TestCase):

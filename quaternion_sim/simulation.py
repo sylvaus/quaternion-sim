@@ -1,10 +1,10 @@
 import sys
-import quaternion.quaternion as quat
-from quaternion.pose import Pose
-from solids import Sphere, Parallepiped
-from frames import Frame, FrameManager
-from axes import Axis
-from mainwindow import MainWindow
+from .quaternion import quaternion as quat
+from .quaternion.pose import Pose
+from .solids import Sphere, Parallepiped
+from .frames import Frame, FrameManager
+from .axes import Axis
+from .mainwindow import MainWindow
 from PyQt4 import QtGui, QtCore
 from numpy import array
 
@@ -47,17 +47,26 @@ class Simulation(object):
 
         sys.exit(self.qt_app.exec_())
 
+    def reset(self):
+        self.plate.reset_pose()
+        self.ball.reset_pose()
+        self.ball.reset_vels()
+
     def update_object_poses(self):
         keys = self.window.get_pressed_keys(delete=True)
         if len(keys) > 0:
-            if QtCore.Qt.Key_Q in keys:
+            if QtCore.Qt.Key_A in keys:
                 self.plate.rotate(quat.quaternion_x(3, False))
-            if QtCore.Qt.Key_D in keys:
+            elif QtCore.Qt.Key_Q in keys:
                 self.plate.rotate(quat.quaternion_x(-3, False))
-            if QtCore.Qt.Key_Z in keys:
+            elif QtCore.Qt.Key_S in keys:
                 self.plate.rotate(quat.quaternion_y(3, False))
-            if QtCore.Qt.Key_S in keys:
+            elif QtCore.Qt.Key_W in keys:
                 self.plate.rotate(quat.quaternion_y(-3, False))
+            elif QtCore.Qt.Key_Z in keys:
+                self.plate.rotate(quat.quaternion_z(3, False))
+            elif QtCore.Qt.Key_X in keys:
+                self.plate.rotate(quat.quaternion_z(-3, False))
 
             if QtCore.Qt.Key_P in keys:
                 self.ball.translate(array([0.1,0,0]))
@@ -66,15 +75,6 @@ class Simulation(object):
                 self.ball.translate(array([0,0.1,0]))
 
             if QtCore.Qt.Key_Escape in keys:
-                self.plate.reset_pose()
-                self.ball.reset_pose()
-                self.ball.reset_vels()
+                self.reset()
 
 
-def main():
-    sim = Simulation()
-    sim.start_simulation()
-
-
-if __name__ == "__main__":
-    main()

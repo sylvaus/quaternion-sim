@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import cos, sin, matrix, ndarray
 
-from quaternion.matrix_vector_utils import tensor_product, cross_product_matrix
+from .matrix_vector_utils import tensor_product, cross_product_matrix
 
 
 def RxMatrix(theta: float) -> float:

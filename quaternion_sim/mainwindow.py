@@ -1,10 +1,10 @@
 # TODO add a function (add_axis)
 from PyQt4 import QtCore
 from PyQt4 import QtGui
-from canvas_opengl_qt import glWidget
-from quaternion.pose import Pose
-from solids import Solid
-from axes import Axis
+from .canvas_opengl_qt import glWidget
+from .quaternion.pose import Pose
+from .solids import Solid
+from .axes import Axis
 
 
 class MainWindow(QtGui.QMainWindow):

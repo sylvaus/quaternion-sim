@@ -1,5 +1,5 @@
 from numpy import ndarray, array, allclose
-from quaternion.quaternion import Quaternion
+from .quaternion import Quaternion
 
 
 class Pose(object):

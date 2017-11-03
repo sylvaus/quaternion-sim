@@ -1,8 +1,8 @@
 import numpy as np
-from quaternion import rotation_matrix as rotm
+from . import rotation_matrix as rotm
 from time import time
 
-rad_to_deg = 180.0 / np.pi
+RAD_TO_DEG = 180.0 / np.pi
 
 
 class Quaternion(object):
@@ -51,7 +51,7 @@ class Quaternion(object):
         if rad:
             return 2.0 * np.arctan2(np.linalg.norm(self.array[1:4]), self.array[0])
         else:
-            return 2.0 * np.arctan2(np.linalg.norm(self.array[1:4]), self.array[0]) * rad_to_deg
+            return 2.0 * np.arctan2(np.linalg.norm(self.array[1:4]), self.array[0]) * RAD_TO_DEG
 
     def to_rot_matrix(self) -> np.matrix:
         if np.linalg.norm(self.array[1:4]) == 0:
@@ -115,26 +115,26 @@ def quaternion_log(quat: Quaternion) -> Quaternion:
 
 def quaternion_x(theta: float, rad: bool = True) -> Quaternion:
     if rad:
-        return Quaternion([np.cos(theta / 2), np.sin(theta / 2), 0, 0])
+        return Quaternion(np.array([np.cos(theta / 2), np.sin(theta / 2), 0, 0]))
     else:
-        theta = theta / rad_to_deg
-        return Quaternion([np.cos(theta / 2), np.sin(theta / 2), 0, 0])
+        theta = theta / RAD_TO_DEG
+        return Quaternion(np.array([np.cos(theta / 2), np.sin(theta / 2), 0, 0]))
 
 
 def quaternion_y(theta: float, rad: bool = True) -> Quaternion:
     if rad:
-        return Quaternion([np.cos(theta / 2), 0, np.sin(theta / 2), 0])
+        return Quaternion(np.array([np.cos(theta / 2), 0, np.sin(theta / 2), 0]))
     else:
-        theta = theta / rad_to_deg
-        return Quaternion([np.cos(theta / 2), 0, np.sin(theta / 2), 0])
+        theta = theta / RAD_TO_DEG
+        return Quaternion(np.array([np.cos(theta / 2), 0, np.sin(theta / 2), 0]))
 
 
 def quaternion_z(theta: float, rad: bool = True) -> Quaternion:
     if rad:
-        return Quaternion([np.cos(theta / 2), 0, 0, np.sin(theta / 2)])
+        return Quaternion(np.array([np.cos(theta / 2), 0, 0, np.sin(theta / 2)]))
     else:
-        theta = theta / rad_to_deg
-        return Quaternion([np.cos(theta / 2), 0, 0, np.sin(theta / 2)])
+        theta = theta / RAD_TO_DEG
+        return Quaternion(np.array([np.cos(theta / 2), 0, 0, np.sin(theta / 2)]))
 
 
 def quaternion_axis_theta(axis: np.ndarray, theta: float, rad: bool = True) -> Quaternion:
@@ -146,7 +146,7 @@ def quaternion_axis_theta(axis: np.ndarray, theta: float, rad: bool = True) -> Q
         axis = axis / axis_norm
 
     if not rad:
-        theta = theta / rad_to_deg
+        theta = theta / RAD_TO_DEG
 
     return Quaternion(np.insert(axis * np.sin(theta / 2.0), 0, np.cos(theta / 2.0)))
 

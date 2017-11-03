@@ -4,10 +4,10 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from PyQt4.QtOpenGL import *
-from quaternion.pose import Pose
-from solids import Solid
-from frames import FrameManager, Frame
-from axes import Axis
+from .quaternion.pose import Pose
+from .solids import Solid
+from .frames import FrameManager, Frame
+from .axes import Axis
 
 
 class glWidget(QGLWidget):
@@ -22,6 +22,10 @@ class glWidget(QGLWidget):
                  axes: list = [],
                  frame_mgr: FrameManager = None
                  ):
+
+        # ADDED FOR LINUX
+        glutInit(sys.argv)
+
         QGLWidget.__init__(self, parent)
         self.setMinimumSize(640, 480)
 
@@ -62,7 +66,8 @@ class glWidget(QGLWidget):
                 self.move_to_pose(frame_poses[axis.frame.name])
                 axis.draw(False)
 
-        glutSwapBuffers()
+	# REMOVED FOR LINUX
+        # glutSwapBuffers()
 
     def updateGL(self):
         self.glDraw()

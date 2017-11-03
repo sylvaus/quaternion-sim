@@ -1,5 +1,5 @@
 # quaternion-sim
-### Quick Description
+## Quick Description
 A little project to show one use of quaternion, different ways to model 
 a ball on a plate and teach a bit of control theory.
 
@@ -43,12 +43,12 @@ represented.
 ##### Quaternion interpolation
 
 
-### Getting Started
+## Getting Started
 Clone this repository
-Make sure you have all the required python packages
-Run quaternion-sim.py
+Make sure you have all the required python and Ubuntu packages then run:   
+`python3 main.py`
 
-### Implementation Status 
+## Implementation Status 
 - Quaternion class (easy): Done
 - Pose class (easy): Done
 - Solid class (easy): Done
@@ -69,7 +69,7 @@ Run quaternion-sim.py
     - solids (0%)
     
 
-### Requirements
+## Requirements
 - Python 3.5
 - Numpy (developed with V1.10.4)
 - PyQt4 (developed with V4.11.4) 
@@ -79,6 +79,13 @@ Run quaternion-sim.py
       visual representation) 
 - PyOpenGL (developed with V3.1.0)
 
+### Pip Packages
 The first four are contained in the Anaconda Python 3.5 distribution.
-The last one can be obtained by using pip: 
-$ pip install PyOpenGL PyOpenGL_accelerate
+The last one can be obtained by using pip:   
+`pip install numpy PyOpenGL PyOpenGL_accelerate`
+
+### Ubnutu Packages
+#### OpenGl
+`sudo apt-get install build-essential libgl1-mesa-dev libglew-dev libsdl2-dev libsdl2-image-dev libglm-dev libfreetype6-dev`
+#### PyQt4
+`sudo apt-get install python3-pyqt4`

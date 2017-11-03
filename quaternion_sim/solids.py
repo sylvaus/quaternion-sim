@@ -8,10 +8,10 @@ from OpenGL.GLUT import glutSolidCube
 from numpy import matrix, ndarray, pi, array
 from numpy.core.numeric import identity
 
-from quaternion.quaternion import Quaternion
-from quaternion.pose import Pose
+from .quaternion.quaternion import Quaternion
+from .quaternion.pose import Pose
 
-from frames import Frame
+from .frames import Frame
 
 import copy as cp
 
