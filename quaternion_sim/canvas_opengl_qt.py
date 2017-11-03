@@ -14,12 +14,12 @@ class glWidget(QGLWidget):
     def __init__(self,
                  parent,
                  camera_pose: Pose = Pose(),
-                 back_color: list = [0.3, 0.5, 1.0, 0.0],
-                 ambient_light_color: list = [1.0, 1.0, 1.0, 0],
-                 diffuse_light_color: list = [1.0, 1.0, 1.0, 0],
-                 diffuse_light_position: list = [10.0, 10.0, 10.0, 0.0],
-                 solids: list = [],
-                 axes: list = [],
+                 back_color: list = None,
+                 ambient_light_color: list = None,
+                 diffuse_light_color: list = None,
+                 diffuse_light_position: list = None,
+                 solids: list = None,
+                 axes: list = None,
                  frame_mgr: FrameManager = None
                  ):
 
@@ -29,8 +29,8 @@ class glWidget(QGLWidget):
         QGLWidget.__init__(self, parent)
         self.setMinimumSize(640, 480)
 
-        self.solids = solids
-        self.axes = axes
+        self.solids = solids if solids else []
+        self.axes = axes if axes else []
 
         self.frame_mgr = frame_mgr
 
@@ -38,12 +38,12 @@ class glWidget(QGLWidget):
         self.camera_pose = camera_pose
 
         # Color parameters
-        self.back_color = back_color
+        self.back_color = back_color if back_color else [0.3, 0.5, 1.0, 0.0]
 
         # Lighting parameters
-        self.ambient_light_color = ambient_light_color
-        self.diffuse_light_color = diffuse_light_color
-        self.diffuse_light_position = diffuse_light_position
+        self.ambient_light_color = ambient_light_color if ambient_light_color else [1.0, 1.0, 1.0, 0]
+        self.diffuse_light_color = diffuse_light_color if diffuse_light_color else [1.0, 1.0, 1.0, 0]
+        self.diffuse_light_position = diffuse_light_position if diffuse_light_position else [10.0, 10.0, 10.0, 0.0]
 
     def paintGL(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -66,7 +66,7 @@ class glWidget(QGLWidget):
                 self.move_to_pose(frame_poses[axis.frame.name])
                 axis.draw(False)
 
-	# REMOVED FOR LINUX
+        # REMOVED FOR LINUX
         # glutSwapBuffers()
 
     def updateGL(self):

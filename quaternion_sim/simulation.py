@@ -22,7 +22,6 @@ class Simulation(object):
                            ambient_color=gray_color,
                            diffuse_color=gray_color)
 
-
         self.frame_mgr = FrameManager(self.frame_ref)
         self.frame_mgr.add_frame(self.plate.frame)
         self.frame_mgr.add_frame(self.ball.frame)
@@ -40,6 +39,7 @@ class Simulation(object):
         self.window.add_axis(self.axis)
         self.window.set_frame_mgr(self.frame_mgr)
         self.window.set_cyclic_call(self.update_object_poses)
+        self.window.add_button("Reset", self.reset)
 
     def start_simulation(self):
 
