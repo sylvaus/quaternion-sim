@@ -33,7 +33,7 @@ class TestFrame(unittest.TestCase):
 
         frame.rotate(quat_1)
         self.assertTrue(allclose(frame.pose.orientation.array,
-                                 quat_1.array))
+                                 quat_1._array))
 
         frame.rotate(quat_2)
         self.assertTrue(allclose(frame.pose.orientation.array,

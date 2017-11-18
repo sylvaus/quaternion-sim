@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Union
+from typing import Union, List
 from . import rotation_matrix as rotm
 
 RAD_TO_DEG = 180.0 / np.pi
@@ -10,88 +10,111 @@ class Quaternion(object):
     This quaternion uses the convention cos(theta/2) = q0, sin(theta/2)*axis = [q1, q2, q3]]
     """
 
-    def __init__(self, array: np.ndarray = None):
+    def __init__(self, array: Union[np.ndarray, List[float]] = None):
         if array is None:
-            self.array = np.array([1, 0, 0, 0], dtype=float)
+            self._array = np.array([1, 0, 0, 0], dtype=float)
 
         elif type(array) == np.ndarray:
             assert array.size == 4, 'Quaternion should have a size of 4'
-            self.array = array.astype(dtype=float)
+            self._array = array.astype(dtype=float)
 
         elif type(array) == list:
             assert len(array) == 4, 'Quaternion should have a size of 4'
-            self.array = np.array(array, dtype=float)
+            self._array = np.array(array, dtype=float)
 
         else:
             raise ValueError("Cannot make a quaternion from the given type")
 
+    @property
+    def q0(self):
+        return self._array[0]
+
+    @property
+    def q1(self):
+        return self._array[1]
+
+    @property
+    def q2(self):
+        return self._array[2]
+
+    @property
+    def q3(self):
+        return self._array[3]
+
     def normalize(self) -> None:
-        assert not (np.allclose(self.array, np.array([0, 0, 0, 0], dtype=float))), \
-                 "Cannot normalize [0,0,0,0] quaternion"
-        self.array = self.array / np.linalg.norm(self.array)
+        if(np.allclose(self._array, np.array([0, 0, 0, 0], dtype=float))):
+            self._array = np.array([1, 0, 0, 0], dtype=float)
+        else:
+            self._array = self._array / np.linalg.norm(self._array)
 
     def inverse(self) -> None:
-        self.array[1:4] = -self.array[1:4]
+        self._array[1:4] = -self._array[1:4]
 
     def get_norm(self) -> float:
-        return np.linalg.norm(self.array)
+        return np.linalg.norm(self._array)
 
     def get_inverse(self) -> 'Quaternion':
-        q0 = np.array(self.array[0])
-        qv = -self.array[1:4]
+        q0 = np.array(self._array[0])
+        qv = -self._array[1:4]
         return Quaternion(np.insert(qv, 0, q0))
 
     def get_log(self) -> 'Quaternion':
         return quaternion_log(self)
 
     def get_axis(self) -> np.ndarray:
-        return self.array[1:4] / np.linalg.norm(self.array[1:4])
+        return self._array[1:4] / np.linalg.norm(self._array[1:4])
 
     def get_theta(self, rad: bool = True) -> float:
         if rad:
-            return 2.0 * np.arctan2(np.linalg.norm(self.array[1:4]), self.array[0])
+            return 2.0 * np.arctan2(np.linalg.norm(self._array[1:4]), self._array[0])
         else:
-            return 2.0 * np.arctan2(np.linalg.norm(self.array[1:4]), self.array[0]) * RAD_TO_DEG
+            return 2.0 * np.arctan2(np.linalg.norm(self._array[1:4]), self._array[0]) * RAD_TO_DEG
+
+    def get_normalized(self) -> "Quaternion":
+        if(np.allclose(self._array, np.array([0, 0, 0, 0], dtype=float))):
+            return Quaternion.identity()
+        else:
+            return Quaternion(self._array / np.linalg.norm(self._array))
 
     def to_rot_matrix(self) -> np.matrix:
-        if np.linalg.norm(self.array[1:4]) == 0:
+        if np.linalg.norm(self._array[1:4]) == 0:
             return np.matrix(np.identity(3))
         else:
             res = rotm.RMatrix_fast(self)
             return res
 
     def __repr__(self):
-        return str(self.array)
+        return str(self._array)
 
     def __getitem__(self, item):
-        return self.array[item]
+        return self._array[item]
 
     def __setitem__(self, key, value):
-        self.array[key] = value
+        self._array[key] = value
 
     def __add__(self, other: "Quaternion"):
-        return Quaternion(self.array + other.array)
+        return Quaternion(self._array + other._array)
 
     def __sub__(self, other: "Quaternion"):
-        return Quaternion(self.array - other.array)
+        return Quaternion(self._array - other._array)
 
     def __mul__(self, other: Union["Quaternion", float]):
         if type(other) == type(self):
-            q0 = np.array(self.array[0] * other.array[0] - np.dot(self.array[1:4], other.array[1:4]))
-            qv = self.array[0] * other.array[1:4] + other.array[0] * self.array[1:4] + \
-                np.cross(self.array[1:4], other.array[1:4])
+            q0 = np.array(self._array[0] * other._array[0] - np.dot(self._array[1:4], other._array[1:4]))
+            qv = self._array[0] * other._array[1:4] + other._array[0] * self._array[1:4] + \
+                 np.cross(self._array[1:4], other._array[1:4])
             return Quaternion(np.insert(qv, 0, q0))
         elif (type(other) == float) or (type(other) == int):
-            return Quaternion(self.array * other)
+            return Quaternion(self._array * other)
 
     def __rmul__(self, other: Union["Quaternion", float]):
         if type(other) == type(self):
-            q0 = np.array(self.array[0] * other.array[0] - np.dot(self.array[1:4], other.array[1:4]))
-            qv = self.array[0] * other.array[1:4] + other.array[0] * self.array[1:4] + \
-                np.cross(self.array[1:4], other.array[1:4])
+            q0 = np.array(self._array[0] * other._array[0] - np.dot(self._array[1:4], other._array[1:4]))
+            qv = self._array[0] * other._array[1:4] + other._array[0] * self._array[1:4] + \
+                 np.cross(self._array[1:4], other._array[1:4])
             return Quaternion(np.insert(qv, 0, q0))
         elif (type(other) == float) or (type(other) == int):
-            return Quaternion(self.array * other)
+            return Quaternion(self._array * other)
 
     def dot(self, other: "Quaternion",
             unit_quat: bool = False):
@@ -99,18 +122,22 @@ class Quaternion(object):
         If the param unit_quat is true then the calculation ensures that the result is a unit quaternion.
         """
         if unit_quat:
-            q0 = np.array(self.array[0] * other.array[0] - np.dot(self.array[1:4], other.array[1:4]))
-            qv = self.array[0] * other.array[1:4] + other.array[0] * self.array[1:4] + \
-                np.cross(self.array[1:4], other.array[1:4])
+            q0 = np.array(self._array[0] * other._array[0] - np.dot(self._array[1:4], other._array[1:4]))
+            qv = self._array[0] * other._array[1:4] + other._array[0] * self._array[1:4] + \
+                 np.cross(self._array[1:4], other._array[1:4])
 
             result = Quaternion(np.insert(qv, 0, q0))
             result.normalize()
             return result
         else:
-            q0 = np.array(self.array[0] * other.array[0] - np.dot(self.array[1:4], other.array[1:4]))
-            qv = self.array[0] * other.array[1:4] + other.array[0] * self.array[1:4] + \
-                np.cross(self.array[1:4], other.array[1:4])
+            q0 = np.array(self._array[0] * other._array[0] - np.dot(self._array[1:4], other._array[1:4]))
+            qv = self._array[0] * other._array[1:4] + other._array[0] * self._array[1:4] + \
+                 np.cross(self._array[1:4], other._array[1:4])
             return Quaternion(np.insert(qv, 0, q0))
+
+    @staticmethod
+    def identity() -> "Quaternion":
+        return Quaternion(np.array([1, 0, 0, 0], dtype=float))
 
 
 def quaternion_log(quat: Quaternion) -> Quaternion:
@@ -177,6 +204,7 @@ def nlerp(quat_start: Quaternion, quat_end: Quaternion, coeff: float) -> Quatern
 
 
 def slerp(quat_start: Quaternion, quat_end: Quaternion, coeff: float) -> Quaternion:
+
     pass  # TODO
 
 

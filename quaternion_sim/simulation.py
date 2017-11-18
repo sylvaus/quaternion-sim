@@ -43,7 +43,7 @@ class Simulation(object):
 
     def start_simulation(self):
 
-        self.window.start(50)
+        self.window.start(10)
 
         sys.exit(self.qt_app.exec_())
 
@@ -57,15 +57,15 @@ class Simulation(object):
         if len(keys) > 0:
             if QtCore.Qt.Key_A in keys:
                 self.plate.rotate(quat.quaternion_x(3, False))
-            elif QtCore.Qt.Key_Q in keys:
+            if QtCore.Qt.Key_Q in keys:
                 self.plate.rotate(quat.quaternion_x(-3, False))
-            elif QtCore.Qt.Key_S in keys:
+            if QtCore.Qt.Key_S in keys:
                 self.plate.rotate(quat.quaternion_y(3, False))
-            elif QtCore.Qt.Key_W in keys:
+            if QtCore.Qt.Key_W in keys:
                 self.plate.rotate(quat.quaternion_y(-3, False))
-            elif QtCore.Qt.Key_Z in keys:
+            if QtCore.Qt.Key_Z in keys:
                 self.plate.rotate(quat.quaternion_z(3, False))
-            elif QtCore.Qt.Key_X in keys:
+            if QtCore.Qt.Key_X in keys:
                 self.plate.rotate(quat.quaternion_z(-3, False))
 
             if QtCore.Qt.Key_P in keys:
