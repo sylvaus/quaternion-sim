@@ -1,8 +1,14 @@
-import numpy as np
+from math import acos, cos, sin
 from typing import Union, List
+import numpy as np
 from . import rotation_matrix as rotm
 
 RAD_TO_DEG = 180.0 / np.pi
+DOT_THRESHOLD = 0.9995
+
+
+def sign(val):
+    return 1 if val >= 0.0 else -1
 
 
 class Quaternion(object):
@@ -42,41 +48,78 @@ class Quaternion(object):
         return self._array[3]
 
     def normalize(self) -> None:
-        if(np.allclose(self._array, np.array([0, 0, 0, 0], dtype=float))):
+        """
+        Normalize Quaternion
+        :return: None
+        """
+        if np.allclose(self._array, np.array([0, 0, 0, 0], dtype=float)):
             self._array = np.array([1, 0, 0, 0], dtype=float)
         else:
             self._array = self._array / np.linalg.norm(self._array)
 
     def inverse(self) -> None:
+        """
+        Inverse Quaternion
+        :return: None
+        """
         self._array[1:4] = -self._array[1:4]
 
     def get_norm(self) -> float:
+        """
+        Returns Quaternion norm
+        :return: float
+        """
         return np.linalg.norm(self._array)
 
     def get_inverse(self) -> 'Quaternion':
+        """
+        Returns Quaternion's inverse
+        :return: Quaternion
+        """
         q0 = np.array(self._array[0])
         qv = -self._array[1:4]
         return Quaternion(np.insert(qv, 0, q0))
 
     def get_log(self) -> 'Quaternion':
+        """
+        Returns Quaternion's log
+        :return: Quaternion
+        """
         return quaternion_log(self)
 
     def get_axis(self) -> np.ndarray:
+        """
+        Returns Quaternion's axis
+        :return: numpy.ndarray
+        """
         return self._array[1:4] / np.linalg.norm(self._array[1:4])
 
     def get_theta(self, rad: bool = True) -> float:
+        """
+        Returns Quaternion theta's angle (range [2PI .. -2PI])
+        :param rad: if true returns radians otherwise degrees
+        :return: float
+        """
         if rad:
             return 2.0 * np.arctan2(np.linalg.norm(self._array[1:4]), self._array[0])
         else:
             return 2.0 * np.arctan2(np.linalg.norm(self._array[1:4]), self._array[0]) * RAD_TO_DEG
 
     def get_normalized(self) -> "Quaternion":
-        if(np.allclose(self._array, np.array([0, 0, 0, 0], dtype=float))):
+        """
+        Returns normalized quaternion
+        :return: Quaternion
+        """
+        if (np.allclose(self._array, np.array([0, 0, 0, 0], dtype=float))):
             return Quaternion.identity()
         else:
             return Quaternion(self._array / np.linalg.norm(self._array))
 
     def to_rot_matrix(self) -> np.matrix:
+        """
+        Returns rotation matrix corresponding to the Quaternion
+        :return: numpy.matrix
+        """
         if np.linalg.norm(self._array[1:4]) == 0:
             return np.matrix(np.identity(3))
         else:
@@ -116,27 +159,23 @@ class Quaternion(object):
         elif (type(other) == float) or (type(other) == int):
             return Quaternion(self._array * other)
 
-    def dot(self, other: "Quaternion",
-            unit_quat: bool = False):
-        """
-        If the param unit_quat is true then the calculation ensures that the result is a unit quaternion.
-        """
-        if unit_quat:
-            q0 = np.array(self._array[0] * other._array[0] - np.dot(self._array[1:4], other._array[1:4]))
-            qv = self._array[0] * other._array[1:4] + other._array[0] * self._array[1:4] + \
-                 np.cross(self._array[1:4], other._array[1:4])
+    def __neg__(self):
+        self._array = -self._array
 
-            result = Quaternion(np.insert(qv, 0, q0))
-            result.normalize()
-            return result
-        else:
-            q0 = np.array(self._array[0] * other._array[0] - np.dot(self._array[1:4], other._array[1:4]))
-            qv = self._array[0] * other._array[1:4] + other._array[0] * self._array[1:4] + \
-                 np.cross(self._array[1:4], other._array[1:4])
-            return Quaternion(np.insert(qv, 0, q0))
+    def dot(self, other: "Quaternion") -> float:
+        """
+        Return quaternion dot product
+        :param other: Quaternion
+        :return: float
+        """
+        return np.dot(self._array, other._array)[0]
 
     @staticmethod
     def identity() -> "Quaternion":
+        """
+        Returns Quaternion corresponding to Identity rotation
+        :return: Quaternion
+        """
         return Quaternion(np.array([1, 0, 0, 0], dtype=float))
 
 
@@ -193,20 +232,76 @@ def quaternion_2_vectors(v1: np.ndarray, v2: np.ndarray) -> Quaternion:
     return quaternion_axis_theta(axis, theta)
 
 
+def dot_product(quat_left: Quaternion, quat_right: Quaternion) -> float:
+    return quat_left.dot(quat_right)
+
+
 def lerp(quat_start: Quaternion, quat_end: Quaternion, coeff: float) -> Quaternion:
+    """
+    Linear interpolation
+    :param quat_start: Start quaternion
+    :param quat_end: End Quaternion
+    :param coeff: Interpolation coefficient
+    :return: Quaternion
+    """
     return (quat_start * (1 - coeff)) + (quat_end * coeff)
 
 
 def nlerp(quat_start: Quaternion, quat_end: Quaternion, coeff: float) -> Quaternion:
+    """
+    Normalized linear interpolation
+    :param quat_start: Start quaternion
+    :param quat_end: End Quaternion
+    :param coeff: Interpolation coefficient
+    :return: Quaternion
+    """
     result = (quat_start * (1 - coeff)) + (quat_end * coeff)
     result.normalize()
     return result
 
 
-def slerp(quat_start: Quaternion, quat_end: Quaternion, coeff: float) -> Quaternion:
+def slerp(quat_start: Quaternion, quat_end: Quaternion, coeff: float, shortest_path: bool = False) -> Quaternion:
+    """
+    Spherical Linear Interpolation inspired by C++ code presented there: https://en.wikipedia.org/wiki/Slerp
+    :param quat_start: Start quaternion
+    :param quat_end: End Quaternion
+    :param coeff: Interpolation coefficient
+    :param shortest_path: Takes the shortest path between the two orientations
+    :return: Quaternion
+    """
+    quat_start = quat_start.get_normalized()
+    quat_end = quat_end.get_normalized()
+    dot = dot_product(quat_start, quat_end)
 
-    pass  # TODO
+    if abs(dot) > DOT_THRESHOLD:
+        return nlerp(quat_start, quat_end, coeff)
+
+    if shortest_path and (dot < 0.0):
+        dot = -dot
+        quat_end = -quat_end
+
+    dot = dot if abs(dot) <= 1 else sign(dot)  # constrain dot to 1 .. -1 for acos
+    delta_angle = acos(dot) * coeff
+
+    quat_end_normal = quat_end - quat_start * dot  # quaternion normal to quat_start in quat_start quat_end plan
+    quat_end_normal.normalize()
+
+    return quat_end_normal * sin(delta_angle) + quat_start * cos(delta_angle)
 
 
-def log_interpolation(quat_start: Quaternion, quat_end: Quaternion, coeff: float) -> Quaternion:
-    pass  # TODO
+def log_interpolation(quat_start: Quaternion, quat_end: Quaternion,
+                      coeff: float, shortest_path: bool = False) -> Quaternion:
+    """
+    Logarithmic Quaternion Interpolation
+    :param quat_start: Start quaternion
+    :param quat_end: End Quaternion
+    :param coeff: Interpolation coefficient
+    :param shortest_path: Takes the shortest path between the two orientations
+    :return: Quaternion
+    """
+    delta_quat = quat_end * (quat_start.get_inverse())
+    angle = delta_quat.get_theta()
+    if shortest_path and (abs(angle) > np.pi):
+        angle = angle - (sign(angle) * 2.0 * np.pi)
+
+    return quaternion_axis_theta(delta_quat.get_axis(), angle * coeff) * quat_start
