@@ -47,6 +47,11 @@ class Quaternion(object):
     def q3(self):
         return self._array[3]
 
+    w=q0
+    x=q1
+    y=q2
+    z=q3
+
     def normalize(self) -> None:
         """
         Normalize Quaternion
