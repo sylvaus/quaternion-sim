@@ -48,7 +48,7 @@ def RMatrix(axis: ndarray, theta: float, quat) -> matrix:
 
 def RMatrix_fast(quat: 'Quaternion') -> matrix:
     """
-    Return the rotation matrix corresponding to the quaternion
+    Return the rotation matrix corresponding to the geometry
     without verifying that the axis norm is not zero
     """
     q1q0 = quat[1] * quat[0]

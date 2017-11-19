@@ -1,6 +1,6 @@
 import sys
-from .quaternion import quaternion as quat
-from .quaternion.pose import Pose
+from .geometry import quaternion as quat
+from .geometry.pose import Pose
 from .solids import Sphere, Parallepiped
 from .frames import Frame, FrameManager
 from .axes import Axis

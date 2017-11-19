@@ -13,7 +13,7 @@ def sign(val):
 
 class Quaternion(object):
     """
-    This quaternion uses the convention cos(theta/2) = q0, sin(theta/2)*axis = [q1, q2, q3]]
+    This geometry uses the convention cos(theta/2) = q0, sin(theta/2)*axis = [q1, q2, q3]]
     """
 
     def __init__(self, array: Union[np.ndarray, List[float]] = None):
@@ -29,7 +29,7 @@ class Quaternion(object):
             self._array = np.array(array, dtype=float)
 
         else:
-            raise ValueError("Cannot make a quaternion from the given type")
+            raise ValueError("Cannot make a geometry from the given type")
 
     @property
     def q0(self):
@@ -107,7 +107,7 @@ class Quaternion(object):
 
     def get_normalized(self) -> "Quaternion":
         """
-        Returns normalized quaternion
+        Returns normalized geometry
         :return: Quaternion
         """
         if (np.allclose(self._array, np.array([0, 0, 0, 0], dtype=float))):
@@ -147,7 +147,7 @@ class Quaternion(object):
             qv = self._array[0] * other._array[1:4] + other._array[0] * self._array[1:4] + \
                  np.cross(self._array[1:4], other._array[1:4])
             return Quaternion(np.insert(qv, 0, q0))
-        elif (type(other) == float) or (type(other) == int):
+        else:
             return Quaternion(self._array * other)
 
     def __rmul__(self, other: Union["Quaternion", float]):
@@ -156,19 +156,22 @@ class Quaternion(object):
             qv = self._array[0] * other._array[1:4] + other._array[0] * self._array[1:4] + \
                  np.cross(self._array[1:4], other._array[1:4])
             return Quaternion(np.insert(qv, 0, q0))
-        elif (type(other) == float) or (type(other) == int):
+        else:
             return Quaternion(self._array * other)
 
     def __neg__(self):
-        self._array = -self._array
+        return Quaternion(-self._array)
+
+    def __eq__(self, other: "Quaternion") -> bool:
+        return np.allclose(self._array, other._array)
 
     def dot(self, other: "Quaternion") -> float:
         """
-        Return quaternion dot product
+        Return geometry dot product
         :param other: Quaternion
         :return: float
         """
-        return np.dot(self._array, other._array)[0]
+        return np.asscalar(np.dot(self._array, other._array))
 
     @staticmethod
     def identity() -> "Quaternion":
@@ -239,7 +242,7 @@ def dot_product(quat_left: Quaternion, quat_right: Quaternion) -> float:
 def lerp(quat_start: Quaternion, quat_end: Quaternion, coeff: float) -> Quaternion:
     """
     Linear interpolation
-    :param quat_start: Start quaternion
+    :param quat_start: Start geometry
     :param quat_end: End Quaternion
     :param coeff: Interpolation coefficient
     :return: Quaternion
@@ -250,7 +253,7 @@ def lerp(quat_start: Quaternion, quat_end: Quaternion, coeff: float) -> Quaterni
 def nlerp(quat_start: Quaternion, quat_end: Quaternion, coeff: float) -> Quaternion:
     """
     Normalized linear interpolation
-    :param quat_start: Start quaternion
+    :param quat_start: Start geometry
     :param quat_end: End Quaternion
     :param coeff: Interpolation coefficient
     :return: Quaternion
@@ -263,7 +266,7 @@ def nlerp(quat_start: Quaternion, quat_end: Quaternion, coeff: float) -> Quatern
 def slerp(quat_start: Quaternion, quat_end: Quaternion, coeff: float, shortest_path: bool = False) -> Quaternion:
     """
     Spherical Linear Interpolation inspired by C++ code presented there: https://en.wikipedia.org/wiki/Slerp
-    :param quat_start: Start quaternion
+    :param quat_start: Start geometry
     :param quat_end: End Quaternion
     :param coeff: Interpolation coefficient
     :param shortest_path: Takes the shortest path between the two orientations
@@ -283,7 +286,7 @@ def slerp(quat_start: Quaternion, quat_end: Quaternion, coeff: float, shortest_p
     dot = dot if abs(dot) <= 1 else sign(dot)  # constrain dot to 1 .. -1 for acos
     delta_angle = acos(dot) * coeff
 
-    quat_end_normal = quat_end - quat_start * dot  # quaternion normal to quat_start in quat_start quat_end plan
+    quat_end_normal = quat_end - quat_start * dot  # geometry normal to quat_start in quat_start quat_end plan
     quat_end_normal.normalize()
 
     return quat_end_normal * sin(delta_angle) + quat_start * cos(delta_angle)
@@ -293,7 +296,7 @@ def log_interpolation(quat_start: Quaternion, quat_end: Quaternion,
                       coeff: float, shortest_path: bool = False) -> Quaternion:
     """
     Logarithmic Quaternion Interpolation
-    :param quat_start: Start quaternion
+    :param quat_start: Start geometry
     :param quat_end: End Quaternion
     :param coeff: Interpolation coefficient
     :param shortest_path: Takes the shortest path between the two orientations

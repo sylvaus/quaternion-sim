@@ -25,7 +25,7 @@ class Pose(object):
     def is_equal(self, pose: 'Pose') -> 'Pose':
         """
         return True if the two poses are equal
-        The rotation matrices are compared for the quaternion  due to
+        The rotation matrices are compared for the geometry  due to
         the fact that the 2 quaternions [1,0,0,0] and [-1,0,0,0]
         represent the same rotation (identity)
         """

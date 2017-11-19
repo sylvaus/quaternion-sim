@@ -4,7 +4,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from PyQt4.QtOpenGL import *
-from .quaternion.pose import Pose
+from .geometry.pose import Pose
 from .solids import Solid
 from .frames import FrameManager, Frame
 from .axes import Axis

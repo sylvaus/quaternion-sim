@@ -2,7 +2,7 @@ from typing import Callable, Dict
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 from .canvas_opengl_qt import glWidget
-from .quaternion.pose import Pose
+from .geometry.pose import Pose
 from .solids import Solid
 from .axes import Axis
 

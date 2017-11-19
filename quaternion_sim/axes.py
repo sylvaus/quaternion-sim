@@ -5,7 +5,7 @@ from OpenGL.GLU import gluNewQuadric, gluQuadricDrawStyle, gluQuadricTexture, \
                         gluQuadricNormals, gluCylinder, GLU_FILL, GLU_SMOOTH
 
 from .frames import Frame
-from .quaternion.quaternion import quaternion_x, quaternion_y, Quaternion
+from .geometry.quaternion import quaternion_x, quaternion_y, Quaternion
 
 
 class Axis(object):

@@ -2,7 +2,7 @@ from distutils.core import setup, Extension
 
 
 quaternionC = Extension('demo',
-                    sources = ['quaternion_sim/quaternion.cpp'])
+                    sources = ['quaternion_sim/geometry.cpp'])
 
 def readme():
     with open('README.md') as f:

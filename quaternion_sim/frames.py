@@ -1,5 +1,5 @@
-from .quaternion.pose import Pose
-from .quaternion.pose import Quaternion
+from .geometry.pose import Pose
+from .geometry.pose import Quaternion
 from numpy import array
 from typing import List, Dict
 

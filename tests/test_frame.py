@@ -3,9 +3,9 @@ import unittest
 from numpy import array, allclose
 
 from quaternion_sim.frames import Frame, FrameManager
-from quaternion_sim.quaternion.quaternion import Quaternion, quaternion_axis_theta, quaternion_x, \
+from quaternion_sim.geometry.quaternion import Quaternion, quaternion_axis_theta, quaternion_x, \
                                      quaternion_z
-from quaternion_sim.quaternion.pose import Pose
+from quaternion_sim.geometry.pose import Pose
 from quaternion_sim.solids import Solid
 
 
@@ -156,12 +156,6 @@ class TestFrame(unittest.TestCase):
         self.assertTrue(poses["frame_3"].is_equal(pose_frame_3))
         self.assertTrue(poses["frame_4"].is_equal(pose_frame_4))
         self.assertTrue(poses["frame_5"].is_equal(pose_frame_5))
-
-class TestQuaternion(unittest.TestCase):
-    def test_XXX(self):
-        pass
-
-
 
 
 if __name__ == '__main__':
