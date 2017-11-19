@@ -128,8 +128,19 @@ class Quaternion(object):
         if np.linalg.norm(self._array[1:4]) == 0:
             return np.matrix(np.identity(3))
         else:
-            res = rotm.RMatrix_fast(self)
-            return res
+            q1q0 = self._array[1] * self._array[0]
+            q2q0 = self._array[2] * self._array[0]
+            q3q0 = self._array[3] * self._array[0]
+            q1q1 = self._array[1] * self._array[1]
+            q2q1 = self._array[2] * self._array[1]
+            q3q1 = self._array[3] * self._array[1]
+            q2q2 = self._array[2] * self._array[2]
+            q3q2 = self._array[3] * self._array[2]
+            q3q3 = self._array[3] * self._array[3]
+
+            return np.matrix([[1 - 2 * (q2q2 + q3q3), 2 * (q2q1 - q3q0), 2 * (q3q1 + q2q0)],
+                               [2 * (q2q1 + q3q0), 1 - 2 * (q1q1 + q3q3), 2 * (q3q2 - q1q0)],
+                               [2 * (q3q1 - q2q0), 2 * (q3q2 + q1q0), 1 - 2 * (q1q1 + q2q2)]])
 
     def __repr__(self):
         return str(self._array)

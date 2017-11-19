@@ -1,9 +1,29 @@
 import unittest
 from math import sqrt
+import numpy as np
 from quaternion_sim.geometry.quaternion import Quaternion, slerp
 
 
 class TestQuaternion(unittest.TestCase):
+    def test_constructors(self):
+        quat = Quaternion()
+        self.assertEqual(quat.q0, 1)
+        self.assertEqual(quat.q1, 0)
+        self.assertEqual(quat.q2, 0)
+        self.assertEqual(quat.q3, 0)
+
+        quat = Quaternion([1, 2, 3, 4])
+        self.assertEqual(quat.q0, 1)
+        self.assertEqual(quat.q1, 2)
+        self.assertEqual(quat.q2, 3)
+        self.assertEqual(quat.q3, 4)
+
+        quat = Quaternion(np.array([1, 2, 3, 4]))
+        self.assertEqual(quat.q0, 1)
+        self.assertEqual(quat.q1, 2)
+        self.assertEqual(quat.q2, 3)
+        self.assertEqual(quat.q3, 4)
+
     def test_neg(self):
         quat = -Quaternion([1, 2, 3, 4])
         self.assertEqual(quat.q0, -1)
@@ -18,6 +38,31 @@ class TestQuaternion(unittest.TestCase):
         self.assertEqual(quat.q1, -2)
         self.assertEqual(quat.q2, -3)
         self.assertEqual(quat.q3, -4)
+
+    def test_scalar_mult(self):
+        quat = Quaternion([1, 2, 3, 4])
+        quat = 2.0 *  quat
+        self.assertEqual(quat.q0, 2)
+        self.assertEqual(quat.q1, 4)
+        self.assertEqual(quat.q2, 6)
+        self.assertEqual(quat.q3, 8)
+
+        quat = Quaternion([1, 2, 3, 4])
+        quat = quat * (-2.0)
+        self.assertEqual(quat.q0, -2)
+        self.assertEqual(quat.q1, -4)
+        self.assertEqual(quat.q2, -6)
+        self.assertEqual(quat.q3, -8)
+
+    def test_quat_mult(self):
+        quat_left = Quaternion([1, 2, 3, 4])
+        quat_right = Quaternion([5, -6, 7, -8])
+        quat = quat_left * quat_right
+        self.assertEqual(quat.q0, 28)
+        self.assertEqual(quat.q1, -48)
+        self.assertEqual(quat.q2, 14)
+        self.assertEqual(quat.q3, 44)
+
 
     def test_slerp(self):
         """
