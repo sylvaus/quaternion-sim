@@ -1,7 +1,6 @@
 from math import acos, cos, sin
 from typing import Union, List
 import numpy as np
-from . import rotation_matrix as rotm
 
 RAD_TO_DEG = 180.0 / np.pi
 DOT_THRESHOLD = 0.9995
@@ -97,18 +96,21 @@ class Quaternion(object):
         Returns Quaternion's axis
         :return: numpy.ndarray
         """
-        return self._array[1:4] / np.linalg.norm(self._array[1:4])
+        if np.allclose(self._array, np.array([0, 0, 0], dtype=float)):
+            return np.array([1, 0, 0], dtype=float)
+        else:
+            return self._array[1:4] / np.linalg.norm(self._array[1:4])
 
     def get_theta(self, rad: bool = True) -> float:
         """
-        Returns Quaternion theta's angle (range [2PI .. -2PI])
+        Returns Quaternion theta's angle (range [-PI .. PI])
         :param rad: if true returns radians otherwise degrees
         :return: float
         """
         if rad:
-            return 2.0 * np.arctan2(np.linalg.norm(self._array[1:4]), self._array[0])
+            return 2.0 * np.arcos(self._array[0])
         else:
-            return 2.0 * np.arctan2(np.linalg.norm(self._array[1:4]), self._array[0]) * RAD_TO_DEG
+            return 2.0 * np.arcos(self._array[0]) * RAD_TO_DEG
 
     def get_normalized(self) -> "Quaternion":
         """
@@ -308,19 +310,15 @@ def slerp(quat_start: Quaternion, quat_end: Quaternion, coeff: float, shortest_p
     return quat_end_normal * sin(delta_angle) + quat_start * cos(delta_angle)
 
 
-def log_interpolation(quat_start: Quaternion, quat_end: Quaternion,
-                      coeff: float, shortest_path: bool = False) -> Quaternion:
+def log_interpolation(quat_start: Quaternion, quat_end: Quaternion, coeff: float) -> Quaternion:
     """
     Logarithmic Quaternion Interpolation
     :param quat_start: Start geometry
     :param quat_end: End Quaternion
     :param coeff: Interpolation coefficient
-    :param shortest_path: Takes the shortest path between the two orientations
     :return: Quaternion
     """
     delta_quat = quat_end * (quat_start.get_inverse())
     angle = delta_quat.get_theta()
-    if shortest_path and (abs(angle) > np.pi):
-        angle = angle - (sign(angle) * 2.0 * np.pi)
 
     return quaternion_axis_theta(delta_quat.get_axis(), angle * coeff) * quat_start
