@@ -32,12 +32,12 @@ class TestFrame(unittest.TestCase):
         quat_f = quat_2 * quat_1
 
         frame.rotate(quat_1)
-        self.assertTrue(allclose(frame.pose.orientation.array,
+        self.assertTrue(allclose(frame.pose.orientation._array,
                                  quat_1._array))
 
         frame.rotate(quat_2)
-        self.assertTrue(allclose(frame.pose.orientation.array,
-                                 quat_f.array))
+        self.assertTrue(allclose(frame.pose.orientation._array,
+                                 quat_f._array))
 
     def test_get_frame_seq(self):
         fixed_frame = Frame("fixed", Pose(), "")
