@@ -1,4 +1,4 @@
-from math import acos, cos, sin
+from math import acos, cos, sin, atan2, asin
 from typing import Union, List
 import numpy as np
 
@@ -46,10 +46,10 @@ class Quaternion(object):
     def q3(self):
         return self._array[3]
 
-    w=q0
-    x=q1
-    y=q2
-    z=q3
+    w = q0
+    x = q1
+    y = q2
+    z = q3
 
     def normalize(self) -> None:
         """
@@ -108,16 +108,16 @@ class Quaternion(object):
         :return: float
         """
         if rad:
-            return 2.0 * np.arcos(self._array[0])
+            return 2.0 * acos(self._array[0])
         else:
-            return 2.0 * np.arcos(self._array[0]) * RAD_TO_DEG
+            return 2.0 * acos(self._array[0]) * RAD_TO_DEG
 
     def get_normalized(self) -> "Quaternion":
         """
         Returns normalized geometry
         :return: Quaternion
         """
-        if (np.allclose(self._array, np.array([0, 0, 0, 0], dtype=float))):
+        if np.allclose(self._array, np.array([0, 0, 0, 0], dtype=float)):
             return Quaternion.identity()
         else:
             return Quaternion(self._array / np.linalg.norm(self._array))
@@ -141,8 +141,8 @@ class Quaternion(object):
             q3q3 = self._array[3] * self._array[3]
 
             return np.matrix([[1 - 2 * (q2q2 + q3q3), 2 * (q2q1 - q3q0), 2 * (q3q1 + q2q0)],
-                               [2 * (q2q1 + q3q0), 1 - 2 * (q1q1 + q3q3), 2 * (q3q2 - q1q0)],
-                               [2 * (q3q1 - q2q0), 2 * (q3q2 + q1q0), 1 - 2 * (q1q1 + q2q2)]])
+                              [2 * (q2q1 + q3q0), 1 - 2 * (q1q1 + q3q3), 2 * (q3q2 - q1q0)],
+                              [2 * (q3q1 - q2q0), 2 * (q3q2 + q1q0), 1 - 2 * (q1q1 + q2q2)]])
 
     def __repr__(self):
         return str(self._array)
@@ -162,8 +162,8 @@ class Quaternion(object):
     def __mul__(self, other: Union["Quaternion", float]):
         if type(other) == type(self):
             q0 = np.array(self._array[0] * other._array[0] - np.dot(self._array[1:4], other._array[1:4]))
-            qv = self._array[0] * other._array[1:4] + other._array[0] * self._array[1:4] + \
-                 np.cross(self._array[1:4], other._array[1:4])
+            qv = self._array[0] * other._array[1:4] + other._array[0] * self._array[1:4]\
+                 + np.cross(self._array[1:4], other._array[1:4])
             return Quaternion(np.insert(qv, 0, q0))
         else:
             return Quaternion(self._array * other)
@@ -171,8 +171,8 @@ class Quaternion(object):
     def __rmul__(self, other: Union["Quaternion", float]):
         if type(other) == type(self):
             q0 = np.array(self._array[0] * other._array[0] - np.dot(self._array[1:4], other._array[1:4]))
-            qv = self._array[0] * other._array[1:4] + other._array[0] * self._array[1:4] + \
-                 np.cross(self._array[1:4], other._array[1:4])
+            qv = self._array[0] * other._array[1:4] + other._array[0] * self._array[1:4]\
+                 + np.cross(self._array[1:4], other._array[1:4])
             return Quaternion(np.insert(qv, 0, q0))
         else:
             return Quaternion(self._array * other)
@@ -198,6 +198,50 @@ class Quaternion(object):
         :return: Quaternion
         """
         return Quaternion(np.array([1, 0, 0, 0], dtype=float))
+
+    def to_euler_angles(self):
+        """
+        Quaternion to Euler Angles [roll, pitch, yaw] based on 
+        https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Quaternion_to_Euler_Angles_Conversion
+        :return: [roll, pitch, yaw]
+        """
+        y2 = self._array[2] ** 2
+
+        sin_roll = +2.0 * (self._array[0] * self._array[1] + self._array[2] * self._array[3])
+        cos_roll = +1.0 - 2.0 * ((self._array[0] ** 2) + y2)
+        roll = atan2(sin_roll, cos_roll)
+
+        sin_pitch = +2.0 * (self._array[0] * self._array[2] - self._array[3] * self._array[1])
+        sin_pitch = sign(sin_pitch) if abs(sin_pitch) > 1 else sin_pitch
+        pitch = asin(sin_pitch)
+
+        sin_yaw = +2.0 * (self._array[0] * self._array[3] + self._array[1] * self._array[2])
+        cos_yaw = +1.0 - 2.0 * (y2 + self._array[3] * self._array[3])
+        yaw = atan2(sin_yaw, cos_yaw)
+
+        return [roll, pitch, yaw]
+
+    @staticmethod
+    def from_euler_angles(roll: float, pitch: float, yaw: float) -> "Quaternion":
+        """
+        Euler angles to quaternion based on
+        https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Euler_Angles_to_Quaternion_Conversion
+        :param roll:
+        :param pitch:
+        :param yaw:
+        :return: Quaternion
+        """
+        cy = cos(yaw * 0.5)
+        sy = sin(yaw * 0.5)
+        cr = cos(roll * 0.5)
+        sr = sin(roll * 0.5)
+        cp = cos(pitch * 0.5)
+        sp = sin(pitch * 0.5)
+
+        return Quaternion([cy * cr * cp + sy * sr * sp,
+                           cy * sr * cp - sy * cr * sp,
+                           cy * cr * sp + sy * sr * cp,
+                           sy * cr * cp - cy * sr * sp])
 
 
 def quaternion_log(quat: Quaternion) -> Quaternion:
@@ -244,8 +288,8 @@ def quaternion_axis_theta(axis: np.ndarray, theta: float, rad: bool = True) -> Q
 
 def quaternion_2_vectors(v1: np.ndarray, v2: np.ndarray) -> Quaternion:
     assert not (np.allclose(v1, np.array([0, 0, 0]))) or \
-           not (np.allclose(v2, np.array([0, 0, 0]))) \
-        , "One of the vector is a zero vector"
+           not (np.allclose(v2, np.array([0, 0, 0]))), \
+           "One of the vector is a zero vector"
 
     axis = np.cross(v1, v2)
     v1v2_norm = np.linalg.norm(v1) * np.linalg.norm(v2)
