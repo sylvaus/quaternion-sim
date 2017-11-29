@@ -208,7 +208,7 @@ class Quaternion(object):
         y2 = self._array[2] ** 2
 
         sin_roll = +2.0 * (self._array[0] * self._array[1] + self._array[2] * self._array[3])
-        cos_roll = +1.0 - 2.0 * ((self._array[0] ** 2) + y2)
+        cos_roll = +1.0 - 2.0 * ((self._array[1] ** 2) + y2)
         roll = atan2(sin_roll, cos_roll)
 
         sin_pitch = +2.0 * (self._array[0] * self._array[2] - self._array[3] * self._array[1])
